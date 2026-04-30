@@ -7,7 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -74,10 +77,18 @@ fun HomeScreen(navigator: DestinationsNavigator) {
 
     val style = LocalUIStyle.current
     Scaffold(
+        containerColor = if (style.useGlassEffect) Color.Transparent else MaterialTheme.colorScheme.background,
         topBar = { CenterTopBar(stringResource(R.string.app_name)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .then(if (style.useGlassEffect) Modifier.background(
+                    Brush.verticalGradient(listOf(
+                        Color(0xFF1A1A2E),
+                        Color(0xFF16213E),
+                        Color(0xFF0F3460)
+                    ))
+                ) else Modifier)
                 .padding(innerPadding)
                 .padding(horizontal = style.innerPadding)
                 .verticalScroll(rememberScrollState()),
@@ -110,7 +121,7 @@ private fun ShizukuCard() {
     ElevatedCard(
         shape = LocalUIStyle.current.cardShape,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
-        colors = CardDefaults.elevatedCardColors(containerColor = run {
+        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else run {
             if (ShizukuApi.isPermissionGranted) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.errorContainer
         })
@@ -181,7 +192,8 @@ private fun InfoCard() {
     val scope = rememberCoroutineScope()
     ElevatedCard(
         shape = LocalUIStyle.current.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
+        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(
             modifier = Modifier
@@ -232,7 +244,8 @@ private fun InfoCard() {
 private fun SupportCard() {
     ElevatedCard(
         shape = LocalUIStyle.current.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
+        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(
             modifier = Modifier

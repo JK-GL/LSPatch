@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberAnimatedNavController()
             val currentStyleIndex = Configs.uiStyleIndex
             val uiStyle = UIStyles.ALL.getOrElse(currentStyleIndex) { UIStyles.CLASSIC }
-            LSPTheme(uiStyle = uiStyle) {
+            LSPTheme(uiStyle = uiStyle, enableDynamicColor = !uiStyle.useCustomColors) {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
                     Scaffold(

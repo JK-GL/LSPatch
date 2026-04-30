@@ -1,5 +1,6 @@
 package org.lsposed.lspatch.ui.page
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -33,7 +36,9 @@ fun ManageScreen(
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
+    val style = LocalUIStyle.current
     Scaffold(
+        containerColor = if (style.useGlassEffect) Color.Transparent else MaterialTheme.colorScheme.background,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Manage.label)) },
         floatingActionButton = { if (pagerState.currentPage == 0) AppManageFab(navigator) }
     ) { innerPadding ->

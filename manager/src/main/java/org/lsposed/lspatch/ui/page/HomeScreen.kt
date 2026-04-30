@@ -109,6 +109,7 @@ private val listener: (Int, Int) -> Unit = { _, grantResult ->
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShizukuCard() {
+    val style = LocalUIStyle.current
     LaunchedEffect(Unit) {
         Shizuku.addRequestPermissionResultListener(listener)
     }
@@ -187,12 +188,13 @@ private val device = buildString {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InfoCard() {
+    val style = LocalUIStyle.current
     val context = LocalContext.current
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
     ElevatedCard(
-        shape = LocalUIStyle.current.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
+        shape = style.cardShape,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = style.cardElevation),
         colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Column(
@@ -242,6 +244,7 @@ private fun InfoCard() {
 @Preview
 @Composable
 private fun SupportCard() {
+    val style = LocalUIStyle.current
     ElevatedCard(
         shape = LocalUIStyle.current.cardShape,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),

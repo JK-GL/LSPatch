@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                             snackbarHost = { SnackbarHost(snackbarHostState) }
                         ) { innerPadding ->
                             DestinationsNavHost(
-                                modifier = Modifier.padding(innerPadding),
+                                modifier = Modifier.padding(innerPadding).padding(bottom = AppleDesign.NavBarBottomMargin),
                                 navGraph = NavGraphs.root,
                                 navController = navController
                             )

@@ -87,7 +87,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
             ShizukuCard()
             InfoCard()
             SupportCard()
-            Spacer(Modifier.height(80.dp))
+            Spacer(Modifier.height(8.dp))
         }
     }
 }

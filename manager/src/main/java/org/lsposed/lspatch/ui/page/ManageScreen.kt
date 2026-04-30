@@ -19,6 +19,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.AppleSurface
 import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.theme.AppleAccent
@@ -41,7 +42,7 @@ fun ManageScreen(
     Scaffold(
         containerColor = AppleBackground,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Manage.label)) },
-        floatingActionButton = { if (pagerState.currentPage == 0) AppManageFab(navigator) }
+        floatingActionButton = { if (pagerState.currentPage == 0) Box(Modifier.padding(bottom = 80.dp)) { AppManageFab(navigator) } }
     ) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
             Column {

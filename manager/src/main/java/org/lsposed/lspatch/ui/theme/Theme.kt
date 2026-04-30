@@ -34,11 +34,11 @@ object AppleDesign {
     const val SubSize = 14
     const val CaptionSize = 12
     const val TinySize = 10
-    val PagePadding = 20.dp
+    val PagePadding = 16.dp
     val CardPadding = 16.dp
     val ItemSpacing = 12.dp
     val NavBarHeight = 56.dp
-    val NavBarBottomMargin = 76.dp
+    val NavBarBottomMargin = 72.dp
 }
 
 private val AppleDarkColors = darkColorScheme(

@@ -249,6 +249,7 @@ private fun DetailPatchLogs() {
 private fun UIStyleSelector() {
     var expanded by remember { mutableStateOf(false) }
     val currentStyleIndex = Configs.uiStyleIndex
+    val context = LocalContext.current
     AnywhereDropdown(
         expanded = expanded,
         onDismissRequest = { expanded = false },

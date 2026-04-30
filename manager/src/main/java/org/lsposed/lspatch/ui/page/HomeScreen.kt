@@ -7,10 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,8 +38,6 @@ import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.share.LSPConfig
 import org.lsposed.lspatch.ui.component.CenterTopBar
-import org.lsposed.lspatch.ui.theme.LocalUIStyle
-import org.lsposed.lspatch.ui.theme.FabStyle
 import org.lsposed.lspatch.ui.page.destinations.ManageScreenDestination
 import org.lsposed.lspatch.ui.page.destinations.NewPatchScreenDestination
 import org.lsposed.lspatch.ui.util.HtmlText
@@ -75,24 +70,15 @@ fun HomeScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    val style = LocalUIStyle.current
     Scaffold(
-        containerColor = if (style.useGlassEffect) Color.Transparent else MaterialTheme.colorScheme.background,
         topBar = { CenterTopBar(stringResource(R.string.app_name)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .then(if (style.useGlassEffect) Modifier.background(
-                    Brush.verticalGradient(listOf(
-                        Color(0xFF1A1A2E),
-                        Color(0xFF16213E),
-                        Color(0xFF0F3460)
-                    ))
-                ) else Modifier)
                 .padding(innerPadding)
-                .padding(horizontal = style.innerPadding)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(style.itemSpacing)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ShizukuCard()
             InfoCard()
@@ -109,7 +95,6 @@ private val listener: (Int, Int) -> Unit = { _, grantResult ->
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShizukuCard() {
-    val style = LocalUIStyle.current
     LaunchedEffect(Unit) {
         Shizuku.addRequestPermissionResultListener(listener)
     }
@@ -120,9 +105,7 @@ private fun ShizukuCard() {
     }
 
     ElevatedCard(
-        shape = LocalUIStyle.current.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
-        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else run {
+        colors = CardDefaults.elevatedCardColors(containerColor = run {
             if (ShizukuApi.isPermissionGranted) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.errorContainer
         })
@@ -188,15 +171,10 @@ private val device = buildString {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InfoCard() {
-    val style = LocalUIStyle.current
     val context = LocalContext.current
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
-    ElevatedCard(
-        shape = style.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = style.cardElevation),
-        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {
+    ElevatedCard {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -244,12 +222,7 @@ private fun InfoCard() {
 @Preview
 @Composable
 private fun SupportCard() {
-    val style = LocalUIStyle.current
-    ElevatedCard(
-        shape = LocalUIStyle.current.cardShape,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
-        colors = CardDefaults.elevatedCardColors(containerColor = if (style.useGlassEffect) style.cardColor else MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {
+    ElevatedCard {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

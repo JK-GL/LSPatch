@@ -15,25 +15,22 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
-import org.lsposed.lspatch.config.Configs
 import org.lsposed.lspatch.ui.page.BottomBarDestination
 import org.lsposed.lspatch.ui.page.NavGraphs
 import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
 import org.lsposed.lspatch.ui.theme.LSPTheme
-import org.lsposed.lspatch.ui.theme.UIStyles
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 
 class MainActivity : ComponentActivity() {
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberAnimatedNavController()
-            val currentStyleIndex = Configs.uiStyleIndex
-            val uiStyle = UIStyles.ALL.getOrElse(currentStyleIndex) { UIStyles.CLASSIC }
-            LSPTheme(uiStyle = uiStyle, enableDynamicColor = !uiStyle.useCustomColors) {
+            LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
                     Scaffold(
@@ -62,6 +59,7 @@ private fun BottomBar(navController: NavHostController) {
         if (queue.size == 2) topDestination = queue[1].destination.route!!
         else if (queue.size > 2) topDestination = queue[2].destination.route!!
     }
+
     NavigationBar(tonalElevation = 8.dp) {
         BottomBarDestination.values().forEach { destination ->
             NavigationBarItem(

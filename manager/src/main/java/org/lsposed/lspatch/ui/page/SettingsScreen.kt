@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Ballot
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,7 +32,6 @@ import org.lsposed.lspatch.ui.component.AnywhereDropdown
 import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.component.settings.SettingsSwitch
-import org.lsposed.lspatch.ui.theme.UIStyles
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
@@ -52,7 +50,6 @@ fun SettingsScreen() {
         ) {
             KeyStore()
             DetailPatchLogs()
-            UIStyleSelector()
         }
     }
 }
@@ -242,39 +239,4 @@ private fun DetailPatchLogs() {
         icon = Icons.Outlined.BugReport,
         title = stringResource(R.string.settings_detail_patch_logs)
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun UIStyleSelector() {
-    var expanded by remember { mutableStateOf(false) }
-    val currentStyleIndex = Configs.uiStyleIndex
-    val context = LocalContext.current
-    AnywhereDropdown(
-        expanded = expanded,
-        onDismissRequest = { expanded = false },
-        onClick = { expanded = true },
-        surface = {
-            SettingsItem(
-                icon = Icons.Outlined.Palette,
-                title = "UI 风格",
-                desc = UIStyles.NAMES[currentStyleIndex]
-            )
-        }
-    ) {
-        UIStyles.NAMES.forEachIndexed { index, name ->
-            DropdownMenuItem(
-                text = { Text(name) },
-                onClick = {
-                    Configs.uiStyleIndex = index
-                    expanded = false
-                    // Restart activity to apply new style
-                    val ctx = context
-                    if (ctx is android.app.Activity) {
-                        ctx.recreate()
-                    }
-                }
-            )
-        }
-    }
 }

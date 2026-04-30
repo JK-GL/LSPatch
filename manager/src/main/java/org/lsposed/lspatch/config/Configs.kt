@@ -6,12 +6,12 @@ import org.lsposed.lspatch.ui.util.getValue
 import org.lsposed.lspatch.ui.util.setValue
 
 object Configs {
+
     private const val PREFS_KEYSTORE_PASSWORD = "keystore_password"
     private const val PREFS_KEYSTORE_ALIAS = "keystore_alias"
     private const val PREFS_KEYSTORE_ALIAS_PASSWORD = "keystore_alias_password"
     private const val PREFS_STORAGE_DIRECTORY = "storage_directory"
     private const val PREFS_DETAIL_PATCH_LOGS = "detail_patch_logs"
-    private const val PREFS_UI_STYLE_INDEX = "ui_style_index"
 
     var keyStorePassword by delegateStateOf(lspApp.prefs.getString(PREFS_KEYSTORE_PASSWORD, "123456")!!) {
         lspApp.prefs.edit().putString(PREFS_KEYSTORE_PASSWORD, it).apply()
@@ -31,9 +31,5 @@ object Configs {
 
     var detailPatchLogs by delegateStateOf(lspApp.prefs.getBoolean(PREFS_DETAIL_PATCH_LOGS, true)) {
         lspApp.prefs.edit().putBoolean(PREFS_DETAIL_PATCH_LOGS, it).apply()
-    }
-
-    var uiStyleIndex by delegateStateOf(lspApp.prefs.getInt(PREFS_UI_STYLE_INDEX, 0)) {
-        lspApp.prefs.edit().putInt(PREFS_UI_STYLE_INDEX, it).apply()
     }
 }

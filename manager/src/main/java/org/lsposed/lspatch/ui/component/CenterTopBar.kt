@@ -1,29 +1,30 @@
 package org.lsposed.lspatch.ui.component
 
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import org.lsposed.lspatch.ui.util.SampleStringProvider
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.lsposed.lspatch.ui.theme.AppleText
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun CenterTopBar(@PreviewParameter(SampleStringProvider::class, 1) text: String) {
-    CenterAlignedTopAppBar(
+fun CenterTopBar(text: String) {
+    TopAppBar(
         title = {
             Text(
                 text = text,
-                color = MaterialTheme.colorScheme.primary,
+                color = AppleText,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace,
-                style = MaterialTheme.typography.titleMedium
+                fontSize = 28.sp,
+                letterSpacing = (-0.5).sp
             )
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = androidx.compose.ui.graphics.Color.Transparent
+        ),
+        modifier = Modifier.padding(start = 4.dp)
     )
 }

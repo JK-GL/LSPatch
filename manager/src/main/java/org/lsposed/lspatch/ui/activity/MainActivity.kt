@@ -4,13 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -20,11 +26,15 @@ import org.lsposed.lspatch.ui.page.NavGraphs
 import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
+import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleSurface
+import org.lsposed.lspatch.ui.theme.AppleSurface2
+import org.lsposed.lspatch.ui.theme.AppleText
+import org.lsposed.lspatch.ui.theme.AppleAccent
 import org.lsposed.lspatch.ui.theme.LSPTheme
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 
 class MainActivity : ComponentActivity() {
-
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +44,8 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
                     Scaffold(
-                        bottomBar = { BottomBar(navController) },
+                        containerColor = AppleBackground,
+                        bottomBar = { AppleBottomBar(navController) },
                         snackbarHost = { SnackbarHost(snackbarHostState) }
                     ) { innerPadding ->
                         DestinationsNavHost(
@@ -50,7 +61,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun BottomBar(navController: NavHostController) {
+private fun AppleBottomBar(navController: NavHostController) {
     val currentDestination: Destination = navController.appCurrentDestinationAsState().value
         ?: NavGraphs.root.startAppDestination
     var topDestination by rememberSaveable { mutableStateOf(currentDestination.route) }
@@ -59,11 +70,18 @@ private fun BottomBar(navController: NavHostController) {
         if (queue.size == 2) topDestination = queue[1].destination.route!!
         else if (queue.size > 2) topDestination = queue[2].destination.route!!
     }
-
-    NavigationBar(tonalElevation = 8.dp) {
+    // iOS风格：深色磨砂背景 + 无阴影
+    NavigationBar(
+        containerColor = AppleSurface,
+        tonalElevation = 0.dp,
+        modifier = Modifier
+            .height(84.dp)
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+    ) {
         BottomBarDestination.values().forEach { destination ->
+            val selected = topDestination == destination.direction.route
             NavigationBarItem(
-                selected = topDestination == destination.direction.route,
+                selected = selected,
                 onClick = {
                     navController.navigate(destination.direction.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -74,11 +92,27 @@ private fun BottomBar(navController: NavHostController) {
                     }
                 },
                 icon = {
-                    if (topDestination == destination.direction.route) Icon(destination.iconSelected, stringResource(destination.label))
-                    else Icon(destination.iconNotSelected, stringResource(destination.label))
+                    Icon(
+                        if (selected) destination.iconSelected else destination.iconNotSelected,
+                        contentDescription = stringResource(destination.label),
+                        modifier = Modifier.size(24.dp)
+                    )
                 },
-                label = { Text(stringResource(destination.label)) },
-                alwaysShowLabel = false
+                label = {
+                    Text(
+                        text = stringResource(destination.label),
+                        fontSize = 10.sp,
+                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                },
+                alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AppleAccent,
+                    selectedTextColor = AppleAccent,
+                    unselectedIconColor = AppleText.copy(alpha = 0.5f),
+                    unselectedTextColor = AppleText.copy(alpha = 0.5f),
+                    indicatorColor = Color.Transparent
+                )
             )
         }
     }

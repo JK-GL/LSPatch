@@ -29,6 +29,8 @@ import org.lsposed.lspatch.R
 import org.lsposed.lspatch.config.Configs
 import org.lsposed.lspatch.config.MyKeyStore
 import org.lsposed.lspatch.ui.component.AnywhereDropdown
+import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.component.settings.SettingsSwitch
@@ -41,6 +43,7 @@ import java.security.KeyStore
 @Composable
 fun SettingsScreen() {
     Scaffold(
+        containerColor = AppleBackground,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Settings.label)) }
     ) { innerPadding ->
         Column(

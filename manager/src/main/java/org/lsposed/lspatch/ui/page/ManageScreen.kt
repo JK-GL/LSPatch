@@ -17,6 +17,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
+import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleSurface
+import org.lsposed.lspatch.ui.theme.AppleText
+import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleSeparator
 import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.page.destinations.SelectAppsScreenDestination
 import org.lsposed.lspatch.ui.page.manage.AppManageBody
@@ -33,31 +38,41 @@ fun ManageScreen(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
     Scaffold(
+        containerColor = AppleBackground,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Manage.label)) },
         floatingActionButton = { if (pagerState.currentPage == 0) AppManageFab(navigator) }
     ) { innerPadding ->
         Box(Modifier.padding(innerPadding)) {
             Column {
                 TabRow(
-                    contentColor = MaterialTheme.colorScheme.secondary,
+                    containerColor = AppleBackground,
+                    contentColor = AppleAccent,
                     selectedTabIndex = pagerState.currentPage
                 ) {
                     Tab(
                         selected = pagerState.currentPage == 0,
-                        onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
+                        onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
+                        selectedContentColor = AppleAccent,
+                        unselectedContentColor = AppleText.copy(alpha = 0.5f)
                     ) {
                         Text(
                             modifier = Modifier.padding(vertical = 16.dp),
-                            text = stringResource(R.string.apps)
+                            color = if (pagerState.currentPage == 0) AppleText else AppleText.copy(alpha = 0.5f),
+                            fontWeight = if (pagerState.currentPage == 0) FontWeight.SemiBold else FontWeight.Normal,
+                            text = stringResource(R.string.apps),
                         )
                     }
                     Tab(
                         selected = pagerState.currentPage == 1,
-                        onClick = { scope.launch { pagerState.animateScrollToPage(1) } }
+                        onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
+                        selectedContentColor = AppleAccent,
+                        unselectedContentColor = AppleText.copy(alpha = 0.5f)
                     ) {
                         Text(
                             modifier = Modifier.padding(vertical = 16.dp),
-                            text = stringResource(R.string.modules)
+                            color = if (pagerState.currentPage == 1) AppleText else AppleText.copy(alpha = 0.5f),
+                            fontWeight = if (pagerState.currentPage == 1) FontWeight.SemiBold else FontWeight.Normal,
+                            text = stringResource(R.string.modules),
                         )
                     }
                 }

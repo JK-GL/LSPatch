@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -15,6 +16,7 @@ import androidx.core.view.ViewCompat
 fun LSPTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     enableDynamicColor: Boolean = true,
+    uiStyle: UIStyle = UIStyles.CLASSIC,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -32,10 +34,11 @@ fun LSPTheme(
             ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = !isDarkTheme
         }
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalUIStyle provides uiStyle) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

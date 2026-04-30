@@ -38,6 +38,8 @@ import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.share.LSPConfig
 import org.lsposed.lspatch.ui.component.CenterTopBar
+import org.lsposed.lspatch.ui.theme.LocalUIStyle
+import org.lsposed.lspatch.ui.theme.FabStyle
 import org.lsposed.lspatch.ui.page.destinations.ManageScreenDestination
 import org.lsposed.lspatch.ui.page.destinations.NewPatchScreenDestination
 import org.lsposed.lspatch.ui.util.HtmlText
@@ -70,15 +72,16 @@ fun HomeScreen(navigator: DestinationsNavigator) {
         }
     }
 
+    val style = LocalUIStyle.current
     Scaffold(
         topBar = { CenterTopBar(stringResource(R.string.app_name)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = style.innerPadding)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(style.itemSpacing)
         ) {
             ShizukuCard()
             InfoCard()
@@ -105,6 +108,8 @@ private fun ShizukuCard() {
     }
 
     ElevatedCard(
+        shape = LocalUIStyle.current.cardShape,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation),
         colors = CardDefaults.elevatedCardColors(containerColor = run {
             if (ShizukuApi.isPermissionGranted) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.errorContainer
@@ -174,7 +179,10 @@ private fun InfoCard() {
     val context = LocalContext.current
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
-    ElevatedCard {
+    ElevatedCard(
+        shape = LocalUIStyle.current.cardShape,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -222,7 +230,10 @@ private fun InfoCard() {
 @Preview
 @Composable
 private fun SupportCard() {
-    ElevatedCard {
+    ElevatedCard(
+        shape = LocalUIStyle.current.cardShape,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = LocalUIStyle.current.cardElevation)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

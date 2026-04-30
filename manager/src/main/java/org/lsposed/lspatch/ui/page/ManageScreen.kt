@@ -18,6 +18,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.ui.component.CenterTopBar
+import org.lsposed.lspatch.ui.theme.LocalUIStyle
 import org.lsposed.lspatch.ui.page.destinations.SelectAppsScreenDestination
 import org.lsposed.lspatch.ui.page.manage.AppManageBody
 import org.lsposed.lspatch.ui.page.manage.AppManageFab
@@ -40,7 +41,9 @@ fun ManageScreen(
             Column {
                 TabRow(
                     contentColor = MaterialTheme.colorScheme.secondary,
-                    selectedTabIndex = pagerState.currentPage
+                    selectedTabIndex = pagerState.currentPage,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.padding(horizontal = LocalUIStyle.current.innerPadding)
                 ) {
                     Tab(
                         selected = pagerState.currentPage == 0,

@@ -267,6 +267,11 @@ private fun UIStyleSelector() {
                 onClick = {
                     Configs.uiStyleIndex = index
                     expanded = false
+                    // Restart activity to apply new style
+                    val ctx = context
+                    if (ctx is android.app.Activity) {
+                        ctx.recreate()
+                    }
                 }
             )
         }

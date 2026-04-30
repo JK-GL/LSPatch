@@ -43,16 +43,21 @@ class MainActivity : ComponentActivity() {
             LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
-                    Scaffold(
-                        containerColor = AppleBackground,
-                        bottomBar = { AppleBottomBar(navController) },
-                        snackbarHost = { SnackbarHost(snackbarHostState) }
-                    ) { innerPadding ->
-                        DestinationsNavHost(
-                            modifier = Modifier.padding(innerPadding),
-                            navGraph = NavGraphs.root,
-                            navController = navController
-                        )
+                    Box(Modifier.fillMaxSize()) {
+                        Scaffold(
+                            containerColor = AppleBackground,
+                            snackbarHost = { SnackbarHost(snackbarHostState) }
+                        ) { innerPadding ->
+                            DestinationsNavHost(
+                                modifier = Modifier.padding(innerPadding),
+                                navGraph = NavGraphs.root,
+                                navController = navController
+                            )
+                        }
+                        // Floating capsule nav bar
+                        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                            AppleBottomBar(navController)
+                        }
                     }
                 }
             }
@@ -70,50 +75,54 @@ private fun AppleBottomBar(navController: NavHostController) {
         if (queue.size == 2) topDestination = queue[1].destination.route!!
         else if (queue.size > 2) topDestination = queue[2].destination.route!!
     }
-    // iOS风格：深色磨砂背景 + 无阴影
-    NavigationBar(
-        containerColor = AppleSurface,
-        tonalElevation = 0.dp,
+    Box(
         modifier = Modifier
-            .height(84.dp)
-            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp, top = 8.dp)
     ) {
-        BottomBarDestination.values().forEach { destination ->
-            val selected = topDestination == destination.direction.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = {
-                    navController.navigate(destination.direction.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = AppleSurface2,
+            shadowElevation = 12.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BottomBarDestination.values().forEach { destination ->
+                    val selected = topDestination == destination.direction.route
+                    IconButton(
+                        onClick = {
+                            navController.navigate(destination.direction.route) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                if (selected) destination.iconSelected else destination.iconNotSelected,
+                                contentDescription = stringResource(destination.label),
+                                tint = if (selected) AppleAccent else AppleText.copy(alpha = 0.4f),
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(destination.label),
+                                fontSize = 9.sp,
+                                color = if (selected) AppleAccent else AppleText.copy(alpha = 0.4f),
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                            )
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                },
-                icon = {
-                    Icon(
-                        if (selected) destination.iconSelected else destination.iconNotSelected,
-                        contentDescription = stringResource(destination.label),
-                        modifier = Modifier.size(24.dp)
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(destination.label),
-                        fontSize = 10.sp,
-                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
-                    )
-                },
-                alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = AppleAccent,
-                    selectedTextColor = AppleAccent,
-                    unselectedIconColor = AppleText.copy(alpha = 0.5f),
-                    unselectedTextColor = AppleText.copy(alpha = 0.5f),
-                    indicatorColor = Color.Transparent
-                )
-            )
+                }
+            }
         }
     }
 }

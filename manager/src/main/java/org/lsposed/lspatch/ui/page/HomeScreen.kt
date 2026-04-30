@@ -36,6 +36,9 @@ import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.share.LSPConfig
 import org.lsposed.lspatch.ui.component.CenterTopBar
+import org.lsposed.lspatch.ui.page.destinations.ManageScreenDestination
+import org.lsposed.lspatch.ui.page.destinations.NewPatchScreenDestination
+import org.lsposed.lspatch.ui.util.HtmlText
 import org.lsposed.lspatch.ui.theme.AppleAccent
 import org.lsposed.lspatch.ui.theme.AppleBackground
 import org.lsposed.lspatch.ui.theme.AppleSurface
@@ -164,18 +167,19 @@ private fun InfoCard() {
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             val contents = StringBuilder()
-            fun infoRow(label: String, value: String) {
+            @Composable
+            fun InfoRow(label: String, value: String) {
                 contents.appendLine(label).appendLine(value).appendLine()
                 Text(text = label, color = AppleText2, fontSize = 13.sp)
                 Text(text = value, color = AppleText, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(16.dp))
             }
-            infoRow(stringResource(R.string.home_api_version), "${LSPConfig.instance.API_CODE}")
-            infoRow(stringResource(R.string.home_lspatch_version), LSPConfig.instance.VERSION_NAME + " (${LSPConfig.instance.VERSION_CODE})")
-            infoRow(stringResource(R.string.home_framework_version), LSPConfig.instance.CORE_VERSION_NAME + " (${LSPConfig.instance.CORE_VERSION_CODE})")
-            infoRow(stringResource(R.string.home_system_version), apiVersion)
-            infoRow(stringResource(R.string.home_device), device)
-            infoRow(stringResource(R.string.home_system_abi), Build.SUPPORTED_ABIS[0])
+            InfoRow(stringResource(R.string.home_api_version), "${LSPConfig.instance.API_CODE}")
+            InfoRow(stringResource(R.string.home_lspatch_version), LSPConfig.instance.VERSION_NAME + " (${LSPConfig.instance.VERSION_CODE})")
+            InfoRow(stringResource(R.string.home_framework_version), LSPConfig.instance.CORE_VERSION_NAME + " (${LSPConfig.instance.CORE_VERSION_CODE})")
+            InfoRow(stringResource(R.string.home_system_version), apiVersion)
+            InfoRow(stringResource(R.string.home_device), device)
+            InfoRow(stringResource(R.string.home_system_abi), Build.SUPPORTED_ABIS[0])
             
             val copiedMessage = stringResource(R.string.home_info_copied)
             TextButton(

@@ -4,15 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,11 +25,12 @@ import org.lsposed.lspatch.ui.page.NavGraphs
 import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
+import org.lsposed.lspatch.ui.theme.AppleAccent
 import org.lsposed.lspatch.ui.theme.AppleBackground
-import org.lsposed.lspatch.ui.theme.AppleSurface
+import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.AppleSurface2
 import org.lsposed.lspatch.ui.theme.AppleText
-import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.theme.LSPTheme
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 
@@ -44,7 +43,7 @@ class MainActivity : ComponentActivity() {
             LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
-                    Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize().background(AppleBackground)) {
                         Scaffold(
                             containerColor = AppleBackground,
                             snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -55,9 +54,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                        // Floating capsule nav bar
                         Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                            AppleBottomBar(navController)
+                            FloatingNavBar(navController)
                         }
                     }
                 }
@@ -67,7 +65,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun AppleBottomBar(navController: NavHostController) {
+private fun FloatingNavBar(navController: NavHostController) {
     val currentDestination: Destination = navController.appCurrentDestinationAsState().value
         ?: NavGraphs.root.startAppDestination
     var topDestination by rememberSaveable { mutableStateOf(currentDestination.route) }
@@ -79,15 +77,15 @@ private fun AppleBottomBar(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp, top = 8.dp)
+            .padding(horizontal = AppleDesign.PagePadding, vertical = 12.dp)
     ) {
         Surface(
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(AppleDesign.CornerL),
             color = AppleSurface2,
-            shadowElevation = 12.dp,
+            shadowElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
+                .height(AppleDesign.NavBarHeight)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -110,14 +108,14 @@ private fun AppleBottomBar(navController: NavHostController) {
                             Icon(
                                 if (selected) destination.iconSelected else destination.iconNotSelected,
                                 contentDescription = stringResource(destination.label),
-                                tint = if (selected) AppleAccent else AppleText.copy(alpha = 0.4f),
+                                tint = if (selected) AppleAccent else AppleText2,
                                 modifier = Modifier.size(22.dp)
                             )
                             Spacer(Modifier.height(2.dp))
                             Text(
                                 text = stringResource(destination.label),
-                                fontSize = 9.sp,
-                                color = if (selected) AppleAccent else AppleText.copy(alpha = 0.4f),
+                                fontSize = AppleDesign.TinySize.sp,
+                                color = if (selected) AppleAccent else AppleText2,
                                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
                             )
                         }

@@ -48,6 +48,8 @@ import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.theme.AppleGreen
 import org.lsposed.lspatch.ui.theme.AppleRed
+import org.lsposed.lspatch.ui.theme.AppleDesign
+import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.AppleSeparator
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 import org.lsposed.lspatch.util.ShizukuApi
@@ -78,7 +80,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = AppleDesign.PagePadding)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -86,7 +88,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
             ShizukuCard()
             InfoCard()
             SupportCard()
-            Spacer(Modifier)
+            Spacer(Modifier.height(80.dp))
         }
     }
 }
@@ -105,7 +107,7 @@ private fun ShizukuCard() {
     val iconColor = if (granted) AppleGreen else AppleRed
     
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppleDesign.CornerM),
         color = bgColor,
         modifier = Modifier
             .fillMaxWidth()
@@ -131,13 +133,13 @@ private fun ShizukuCard() {
                     text = stringResource(if (granted) R.string.shizuku_available else R.string.shizuku_unavailable),
                     color = AppleText,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontSize = AppleDesign.BodySize.sp
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = if (granted) "API " + Shizuku.getVersion() else stringResource(R.string.home_shizuku_warning),
                     color = AppleText2,
-                    fontSize = 14.sp
+                    fontSize = AppleDesign.SubSize.sp
                 )
             }
         }
@@ -161,7 +163,7 @@ private fun InfoCard() {
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppleDesign.CornerM),
         color = AppleSurface,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -170,8 +172,8 @@ private fun InfoCard() {
             @Composable
             fun InfoRow(label: String, value: String) {
                 contents.appendLine(label).appendLine(value).appendLine()
-                Text(text = label, color = AppleText2, fontSize = 13.sp)
-                Text(text = value, color = AppleText, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(text = label, color = AppleText2, fontSize = AppleDesign.CaptionSize.sp)
+                Text(text = value, color = AppleText, fontSize = AppleDesign.BodySize.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(16.dp))
             }
             InfoRow(stringResource(R.string.home_api_version), "${LSPConfig.instance.API_CODE}")
@@ -204,7 +206,7 @@ private fun InfoCard() {
 @Composable
 private fun SupportCard() {
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(AppleDesign.CornerM),
         color = AppleSurface,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -213,13 +215,13 @@ private fun SupportCard() {
                 text = stringResource(R.string.home_support),
                 color = AppleText,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp
+                fontSize = AppleDesign.HeadlineSize.sp
             )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = stringResource(R.string.home_description),
                 color = AppleText2,
-                fontSize = 14.sp,
+                fontSize = AppleDesign.SubSize.sp,
                 lineHeight = 20.sp
             )
             HtmlText(

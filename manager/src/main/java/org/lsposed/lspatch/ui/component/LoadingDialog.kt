@@ -1,5 +1,6 @@
 package org.lsposed.lspatch.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +26,7 @@ fun LoadingDialog() {
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(AppleDesign.CornerM))
-                .then(androidx.compose.foundation.background(AppleSurface)),
+                .background(AppleSurface),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(

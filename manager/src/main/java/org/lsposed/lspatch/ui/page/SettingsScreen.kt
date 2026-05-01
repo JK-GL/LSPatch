@@ -45,6 +45,7 @@ import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.component.settings.SettingsSwitch
 import org.lsposed.lspatch.ui.theme.AppleBackground
 import org.lsposed.lspatch.ui.theme.AppleDesign
+import androidx.compose.ui.unit.dp
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
@@ -198,7 +199,7 @@ private fun KeyStore() {
                         else -> null
                     }
                     Text(
-                        modifier = Modifier.padding(bottom = androidx.compose.ui.unit.dp(8f)),
+                        modifier = Modifier.padding(bottom = 8.dp),
                         text = wrongText ?: stringResource(R.string.settings_keystore_desc),
                         color = if (wrongText != null) MaterialTheme.colorScheme.error else Color.Unspecified
                     )
@@ -249,4 +250,3 @@ private fun DetailPatchLogs() {
     )
 }
     )
-}

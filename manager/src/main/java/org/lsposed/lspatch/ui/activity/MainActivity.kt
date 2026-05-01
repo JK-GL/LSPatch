@@ -41,41 +41,24 @@ class MainActivity : ComponentActivity() {
             LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
-                    // 渐变背景包裹一切
                     Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        XMColors.bgGradientStart,
-                                        XMColors.bgGradientMid,
-                                        XMColors.bgGradientEnd
-                                    )
-                                )
+                        Modifier.fillMaxSize().background(
+                            Brush.verticalGradient(
+                                listOf(XMColors.bgGradientStart, XMColors.bgGradientMid, XMColors.bgGradientEnd)
                             )
+                        )
                     ) {
                         Scaffold(
                             containerColor = Color.Transparent,
-                            snackbarHost = {
-                                SnackbarHost(
-                                    snackbarHostState,
-                                    Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)
-                                )
-                            }
+                            snackbarHost = { SnackbarHost(snackbarHostState, Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)) }
                         ) { innerPadding ->
                             DestinationsNavHost(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                                    .padding(bottom = AppleDesign.NavBarBottomMargin),
+                                modifier = Modifier.padding(innerPadding).padding(bottom = AppleDesign.NavBarBottomMargin),
                                 navGraph = NavGraphs.root,
                                 navController = navController
                             )
                         }
-                        // 悬浮胶囊导航栏
-                        Box(Modifier.align(Alignment.BottomCenter)) {
-                            FloatingNavBar(navController)
-                        }
+                        Box(modifier = Modifier.align(Alignment.BottomCenter)) { FloatingNavBar(navController) }
                     }
                 }
             }
@@ -85,33 +68,22 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun FloatingNavBar(navController: NavHostController) {
-    val currentDestination: Destination = navController.appCurrentDestinationAsState().value
-        ?: NavGraphs.root.startAppDestination
+    val currentDestination: Destination = navController.appCurrentDestinationAsState().value ?: NavGraphs.root.startAppDestination
     var topDestination by rememberSaveable { mutableStateOf(currentDestination.route) }
     LaunchedEffect(currentDestination) {
         val queue = navController.currentBackStack.value
         if (queue.size == 2) topDestination = queue[1].destination.route!!
         else if (queue.size > 2) topDestination = queue[2].destination.route!!
     }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppleDesign.PagePadding, vertical = 12.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = AppleDesign.PagePadding, vertical = 12.dp)) {
         Surface(
             shape = RoundedCornerShape(AppleDesign.CornerL),
             color = XMColors.glassSurface,
             tonalElevation = 0.dp,
             shadowElevation = 8.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppleDesign.NavBarHeight)
+            modifier = Modifier.fillMaxWidth().height(AppleDesign.NavBarHeight)
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
                 BottomBarDestination.values().forEach { destination ->
                     val selected = topDestination == destination.direction.route
                     IconButton(

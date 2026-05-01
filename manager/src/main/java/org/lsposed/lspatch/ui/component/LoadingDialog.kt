@@ -1,6 +1,5 @@
 package org.lsposed.lspatch.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,13 +7,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleDesign
+import org.lsposed.lspatch.ui.theme.AppleSurface
 
-@Preview
 @Composable
 fun LoadingDialog() {
     Dialog(
@@ -24,9 +24,14 @@ fun LoadingDialog() {
         Box(
             modifier = Modifier
                 .size(100.dp)
-                .background(Color.White, shape = RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center,
-            content = { CircularProgressIndicator() }
-        )
+                .clip(RoundedCornerShape(AppleDesign.CornerM))
+                .then(androidx.compose.foundation.background(AppleSurface)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = AppleAccent,
+                strokeWidth = 3.dp
+            )
+        }
     }
 }

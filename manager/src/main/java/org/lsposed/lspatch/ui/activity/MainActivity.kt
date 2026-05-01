@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     Box(Modifier.fillMaxSize().background(AppleBackground)) {
                         Scaffold(
                             containerColor = AppleBackground,
-                            snackbarHost = { SnackbarHost(snackbarHostState) }
+                            snackbarHost = { SnackbarHost(snackbarHostState, Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)) }
                         ) { innerPadding ->
                             DestinationsNavHost(
                                 modifier = Modifier.padding(innerPadding).padding(bottom = AppleDesign.NavBarBottomMargin),

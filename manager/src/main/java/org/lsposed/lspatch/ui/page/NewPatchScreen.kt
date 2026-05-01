@@ -64,6 +64,7 @@ const val ACTION_STORAGE = 0
 const val ACTION_APPLIST = 1
 const val ACTION_INTENT_INSTALL = 2
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun NewPatchScreen(
@@ -238,6 +239,7 @@ fun NewPatchScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfiguringTopBar(onBackClick: () -> Unit) {
     TopAppBar(

@@ -10,10 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import org.lsposed.lspatch.ui.theme.*
+import org.lsposed.lspatch.ui.theme.XMColors
+import org.lsposed.lspatch.ui.theme.XMDimensions
+import org.lsposed.lspatch.ui.theme.XMTypography
 
 @Composable
 fun SettingsSlot(
@@ -26,48 +26,26 @@ fun SettingsSlot(
     action: (@Composable RowScope.() -> Unit)?,
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(if (enabled) 1f else 0.5f),
-        shape = RoundedCornerShape(AppleDesign.CornerM),
-        color = AppleSurface
+        modifier = modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.5f),
+        shape = RoundedCornerShape(XMDimensions.cornerM),
+        color = XMColors.glassSurface
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppleDesign.CardPadding, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = XMDimensions.cardPadding, vertical = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(XMDimensions.spaceM),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = AppleAccent,
-                    modifier = Modifier.size(22.dp)
-                )
-            } else {
-                Spacer(Modifier.width(2.dp))
-            }
-
+                Icon(imageVector = icon, contentDescription = null, tint = XMColors.accent, modifier = Modifier.size(XMDimensions.iconM))
+            } else { Spacer(Modifier.width(2.dp)) }
             Column(Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    color = AppleText,
-                    fontSize = AppleDesign.BodySize.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                Text(text = title, style = XMTypography.subheadline, color = XMColors.textPrimary)
                 if (!desc.isNullOrBlank()) {
                     Spacer(Modifier.height(3.dp))
-                    Text(
-                        text = desc,
-                        color = AppleText2,
-                        fontSize = AppleDesign.SubSize.sp
-                    )
+                    Text(text = desc, style = XMTypography.caption, color = XMColors.textSecondary)
                 }
                 extraContent?.invoke(this)
             }
-
             action?.invoke(this)
         }
     }

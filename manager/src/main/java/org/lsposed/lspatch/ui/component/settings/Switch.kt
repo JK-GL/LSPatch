@@ -12,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import org.lsposed.lspatch.ui.theme.AppleAccent
-import org.lsposed.lspatch.ui.theme.AppleSurface3
+import org.lsposed.lspatch.ui.theme.XMColors
 
 @Composable
 fun SettingsSwitch(
@@ -31,9 +30,9 @@ fun SettingsSwitch(
             onCheckedChange = null,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = AppleAccent,
+                checkedTrackColor = XMColors.accent,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = AppleSurface3
+                uncheckedTrackColor = XMColors.textSecondary.copy(alpha = 0.3f)
             )
         )
     }
@@ -41,22 +40,9 @@ fun SettingsSwitch(
 
 @Preview
 @Composable
-private fun SettingsCheckBoxPreview() {
-    var checked1 by remember { mutableStateOf(false) }
-    var checked2 by remember { mutableStateOf(false) }
+private fun Preview() {
+    var c by remember { mutableStateOf(false) }
     Column {
-        SettingsSwitch(
-            modifier = Modifier.clickable { checked1 = !checked1 },
-            checked = checked1,
-            title = "Title",
-            desc = "Description"
-        )
-        SettingsSwitch(
-            modifier = Modifier.clickable { checked2 = !checked2 },
-            checked = checked2,
-            icon = Icons.Outlined.Api,
-            title = "Title",
-            desc = "Description"
-        )
+        SettingsSwitch(modifier = Modifier.clickable { c = !c }, checked = c, title = "Title", desc = "Desc")
     }
 }

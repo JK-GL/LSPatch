@@ -2,8 +2,16 @@ package org.lsposed.lspatch.ui.page
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -18,17 +26,15 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
-import org.lsposed.lspatch.ui.theme.AppleBackground
-import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.AppleSurface
-import org.lsposed.lspatch.ui.theme.AppleText
-import org.lsposed.lspatch.ui.theme.AppleAccent
-import org.lsposed.lspatch.ui.theme.AppleSeparator
 import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.page.destinations.SelectAppsScreenDestination
 import org.lsposed.lspatch.ui.page.manage.AppManageBody
 import org.lsposed.lspatch.ui.page.manage.AppManageFab
 import org.lsposed.lspatch.ui.page.manage.ModuleManageBody
+import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleDesign
+import org.lsposed.lspatch.ui.theme.AppleText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Destination
@@ -39,12 +45,19 @@ fun ManageScreen(
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
+
     Scaffold(
         containerColor = AppleBackground,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Manage.label)) },
-        floatingActionButton = { if (pagerState.currentPage == 0) Box(Modifier.padding(bottom = 80.dp)) { AppManageFab(navigator) } }
+        floatingActionButton = {
+            if (pagerState.currentPage == 0) {
+                Box(Modifier.padding(bottom = AppleDesign.NavBarBottomMargin)) {
+                    AppManageFab(navigator)
+                }
+            }
+        }
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) {
+        Box(Modifier.padding(innerPadding).fillMaxSize()) {
             Column {
                 TabRow(
                     containerColor = AppleBackground,
@@ -61,7 +74,7 @@ fun ManageScreen(
                             modifier = Modifier.padding(vertical = 16.dp),
                             color = if (pagerState.currentPage == 0) AppleText else AppleText.copy(alpha = 0.5f),
                             fontWeight = if (pagerState.currentPage == 0) FontWeight.SemiBold else FontWeight.Normal,
-                            text = stringResource(R.string.apps),
+                            text = stringResource(R.string.apps)
                         )
                     }
                     Tab(
@@ -74,7 +87,7 @@ fun ManageScreen(
                             modifier = Modifier.padding(vertical = 16.dp),
                             color = if (pagerState.currentPage == 1) AppleText else AppleText.copy(alpha = 0.5f),
                             fontWeight = if (pagerState.currentPage == 1) FontWeight.SemiBold else FontWeight.Normal,
-                            text = stringResource(R.string.modules),
+                            text = stringResource(R.string.modules)
                         )
                     }
                 }
@@ -85,7 +98,12 @@ fun ManageScreen(
                         1 -> ModuleManageBody()
                     }
                 }
+
+                Spacer(Modifier.height(AppleDesign.NavBarBottomMargin))
             }
         }
+    }
+}
+
     }
 }

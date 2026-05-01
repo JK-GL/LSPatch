@@ -41,9 +41,12 @@ import org.lsposed.lspatch.ui.page.destinations.NewPatchScreenDestination
 import org.lsposed.lspatch.ui.util.HtmlText
 import org.lsposed.lspatch.ui.theme.AppleAccent
 import org.lsposed.lspatch.ui.theme.AppleBackground
-import org.lsposed.lspatch.ui.theme.AppleSurface
-import org.lsposed.lspatch.ui.theme.AppleSurface2
-import org.lsposed.lspatch.ui.theme.AppleSurface3
+import org.lsposed.lspatch.ui.theme.XMCard
+import org.lsposed.lspatch.ui.theme.XMColors
+import org.lsposed.lspatch.ui.theme.XMCard
+import org.lsposed.lspatch.ui.theme.XMColors2
+import org.lsposed.lspatch.ui.theme.XMCard
+import org.lsposed.lspatch.ui.theme.XMColors3
 import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.theme.AppleGreen
@@ -73,13 +76,13 @@ fun HomeScreen(navigator: DestinationsNavigator) {
         }
     }
     Scaffold(
-        containerColor = AppleBackground,
+        containerColor = XMColors.bgGradientMid,
         topBar = { CenterTopBar(stringResource(R.string.app_name)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = AppleDesign.PagePadding)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -106,7 +109,7 @@ private fun ShizukuCard() {
     val iconColor = if (granted) AppleGreen else AppleRed
     
     Surface(
-        shape = RoundedCornerShape(AppleDesign.CornerM),
+        shape = RoundedCornerShape(16.dp),
         color = bgColor,
         modifier = Modifier
             .fillMaxWidth()
@@ -130,15 +133,15 @@ private fun ShizukuCard() {
             Column(Modifier.weight(1f)) {
                 Text(
                     text = stringResource(if (granted) R.string.shizuku_available else R.string.shizuku_unavailable),
-                    color = AppleText,
+                    color = XMColors.textPrimary,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = AppleDesign.BodySize.sp
+                    fontSize = 14.sp
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = if (granted) "API " + Shizuku.getVersion() else stringResource(R.string.home_shizuku_warning),
-                    color = AppleText2,
-                    fontSize = AppleDesign.SubSize.sp
+                    color = XMColors.textSecondary,
+                    fontSize = 12.sp
                 )
             }
         }
@@ -161,9 +164,7 @@ private fun InfoCard() {
     val context = LocalContext.current
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
-    Surface(
-        shape = RoundedCornerShape(AppleDesign.CornerM),
-        color = AppleSurface,
+    XMCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -171,8 +172,8 @@ private fun InfoCard() {
             @Composable
             fun InfoRow(label: String, value: String) {
                 contents.appendLine(label).appendLine(value).appendLine()
-                Text(text = label, color = AppleText2, fontSize = AppleDesign.CaptionSize.sp)
-                Text(text = value, color = AppleText, fontSize = AppleDesign.BodySize.sp, fontWeight = FontWeight.Medium)
+                Text(text = label, color = XMColors.textSecondary, fontSize = 11.sp)
+                Text(text = value, color = XMColors.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(16.dp))
             }
             InfoRow(stringResource(R.string.home_api_version), "${LSPConfig.instance.API_CODE}")
@@ -193,7 +194,7 @@ private fun InfoCard() {
             ) {
                 Text(
                     stringResource(android.R.string.copy),
-                    color = AppleAccent,
+                    color = XMColors.accent,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -204,23 +205,21 @@ private fun InfoCard() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SupportCard() {
-    Surface(
-        shape = RoundedCornerShape(AppleDesign.CornerM),
-        color = AppleSurface,
+    XMCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = stringResource(R.string.home_support),
-                color = AppleText,
+                color = XMColors.textPrimary,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = AppleDesign.HeadlineSize.sp
+                fontSize = 18.sp
             )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = stringResource(R.string.home_description),
-                color = AppleText2,
-                fontSize = AppleDesign.SubSize.sp,
+                color = XMColors.textSecondary,
+                fontSize = 12.sp,
                 lineHeight = 20.sp
             )
             HtmlText(

@@ -13,16 +13,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 
-val AppleBackground = Color(0xFF000000)
-val AppleSurface = Color(0xFF1C1C1E)
-val AppleSurface2 = Color(0xFF2C2C2E)
-val AppleSurface3 = Color(0xFF3A3A3C)
-val AppleText = Color(0xFFE5E5EA)
-val AppleText2 = Color(0xFF8E8E93)
-val AppleAccent = Color(0xFF7A8EFF)
-val AppleSeparator = Color(0xFF38383A)
-val AppleRed = Color(0xFFFF453A)
-val AppleGreen = Color(0xFF30D158)
+val AppleBackground = XMColors.bgGradientMid
+val AppleSurface = XMColors.glassSurface
+val AppleSurface2 = XMColors.glassSurface
+val AppleSurface3 = Color(0x40FFFFFF)
+val AppleText = XMColors.textPrimary
+val AppleText2 = XMColors.textSecondary
+val AppleAccent = XMColors.accent
+val AppleSeparator = XMColors.divider
+val AppleRed = XMColors.error
+val AppleGreen = XMColors.success
 
 object AppleDesign {
     val CornerS = 12.dp
@@ -50,9 +50,9 @@ private val AppleDarkColors = darkColorScheme(
     onSecondary = Color.White,
     secondaryContainer = AppleSurface3,
     onSecondaryContainer = AppleText,
-    background = AppleBackground,
+    background = XMColors.bgGradientMid,
     onBackground = AppleText,
-    surface = AppleSurface,
+    surface = XMColors.glassSurface,
     onSurface = AppleText,
     surfaceVariant = AppleSurface2,
     onSurfaceVariant = AppleText2,
@@ -91,7 +91,7 @@ fun LSPTheme(content: @Composable () -> Unit) {
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            (view.context as Activity).window.statusBarColor = Color.Black.toArgb()
+            (view.context as Activity).window.statusBarColor = XMColors.bgGradientStart.toArgb()
             ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = false
         }
     }

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -26,12 +27,12 @@ import org.lsposed.lspatch.ui.page.NavGraphs
 import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
-import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.AppleBackground
 import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.AppleSurface2
-import org.lsposed.lspatch.ui.theme.AppleText
-import org.lsposed.lspatch.ui.theme.AppleText2
+import org.lsposed.lspatch.ui.theme.XMColors
+
+2
 import org.lsposed.lspatch.ui.theme.LSPTheme
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 
@@ -44,9 +45,9 @@ class MainActivity : ComponentActivity() {
             LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
-                    Box(Modifier.fillMaxSize().background(AppleBackground)) {
+                    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(XMColors.bgGradientStart, XMColors.bgGradientMid, XMColors.bgGradientEnd)))) {
                         Scaffold(
-                            containerColor = AppleBackground,
+                            containerColor = XMColors.bgGradientMid,
                             snackbarHost = { SnackbarHost(snackbarHostState, Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)) }
                         ) { innerPadding ->
                             DestinationsNavHost(
@@ -82,7 +83,7 @@ private fun FloatingNavBar(navController: NavHostController) {
     ) {
         Surface(
             shape = RoundedCornerShape(AppleDesign.CornerL),
-            color = AppleSurface2,
+            color = XMColors.glassSurface,
             shadowElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()

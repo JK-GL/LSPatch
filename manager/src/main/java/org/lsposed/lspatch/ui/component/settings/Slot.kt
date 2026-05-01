@@ -1,9 +1,8 @@
 package org.lsposed.lspatch.ui.component.settings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,9 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import org.lsposed.lspatch.ui.theme.XMColors
-import org.lsposed.lspatch.ui.theme.XMDimensions
-import org.lsposed.lspatch.ui.theme.XMTypography
 
 @Composable
 fun SettingsSlot(
@@ -25,29 +21,42 @@ fun SettingsSlot(
     extraContent: (@Composable ColumnScope.() -> Unit)? = null,
     action: (@Composable RowScope.() -> Unit)?,
 ) {
-    Surface(
-        modifier = modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.5f),
-        shape = RoundedCornerShape(XMDimensions.cornerM),
-        color = XMColors.glassSurface
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.5f)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = XMDimensions.cardPadding, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(XMDimensions.spaceM),
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = modifier.size(24.dp),
+            contentAlignment = Alignment.Center,
         ) {
             if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null, tint = XMColors.accent, modifier = Modifier.size(XMDimensions.iconM))
-            } else { Spacer(Modifier.width(2.dp)) }
-            Column(Modifier.weight(1f)) {
-                Text(text = title, style = XMTypography.subheadline, color = XMColors.textPrimary)
-                if (!desc.isNullOrBlank()) {
-                    Spacer(Modifier.height(3.dp))
-                    Text(text = desc, style = XMTypography.caption, color = XMColors.textSecondary)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+        Column(Modifier.weight(1f).padding(vertical = 6.dp)) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
+            Column {
+                if (desc != null) {
+                    Text(
+                        text = desc,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .alpha(0.75f)
+                            .padding(top = 4.dp)
+                    )
                 }
                 extraContent?.invoke(this)
             }
-            action?.invoke(this)
         }
+        action?.invoke(this)
     }
 }
 

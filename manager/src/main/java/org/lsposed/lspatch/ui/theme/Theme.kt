@@ -24,8 +24,10 @@ fun LSPTheme(
         else -> lightColorScheme()
     }
     val view = LocalView.current
+    if (!view.isInEditMode) {
         SideEffect {
             (view.context as Activity).window.statusBarColor = colorScheme.background.toArgb()
+            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = !isDarkTheme
         }
     }
     MaterialTheme(

@@ -1,31 +1,29 @@
 package org.lsposed.lspatch.ui.component
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.XMColors
-import org.lsposed.lspatch.ui.theme.XMTypography
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import org.lsposed.lspatch.ui.util.SampleStringProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-fun CenterTopBar(text: String) {
-    TopAppBar(
+fun CenterTopBar(@PreviewParameter(SampleStringProvider::class, 1) text: String) {
+    CenterAlignedTopAppBar(
         title = {
             Text(
                 text = text,
-                style = XMTypography.title
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                style = MaterialTheme.typography.titleMedium
             )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = XMColors.bgGradientMid,
-            titleContentColor = XMColors.textPrimary
-        ),
-        modifier = Modifier.padding(horizontal = AppleDesign.PagePadding)
+        }
     )
 }

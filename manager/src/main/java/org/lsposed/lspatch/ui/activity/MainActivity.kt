@@ -52,8 +52,8 @@ private fun BottomBar(navController: NavHostController) {
     var topDestination by rememberSaveable { mutableStateOf(currentDestination.route) }
     LaunchedEffect(currentDestination) {
         val queue = navController.currentBackStack.value
-        if (queue.size == 2) topDestination = queue[1].destination.routels -lh /sdcard/Download/manager-v*.apk
-        else if (queue.size > 2) topDestination = queue[2].destination.routels -lh /sdcard/Download/manager-v*.apk
+        if (queue.size == 2) topDestination = queue[1].destination.route!!
+        else if (queue.size > 2) topDestination = queue[2].destination.route!!
     }
     NavigationBar(tonalElevation = 8.dp) {
         BottomBarDestination.values().forEach { destination ->

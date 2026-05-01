@@ -3,40 +3,28 @@ package org.lsposed.lspatch.ui.page.manage
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.ui.component.AnywhereDropdown
 import org.lsposed.lspatch.ui.component.AppItem
-import org.lsposed.lspatch.ui.theme.AppleAccent
-import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.AppleText
-import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.viewmodel.manage.ModuleManageViewModel
 import org.lsposed.lspatch.util.LSPPackageManager
 
@@ -44,32 +32,26 @@ import org.lsposed.lspatch.util.LSPPackageManager
 fun ModuleManageBody() {
     val context = LocalContext.current
     val viewModel = viewModel<ModuleManageViewModel>()
-
     if (viewModel.appList.isEmpty()) {
         Box(Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = if (LSPPackageManager.appList.isEmpty()) {
-                    stringResource(R.string.manage_loading)
-                } else {
-                    stringResource(R.string.manage_no_modules)
+                text = run {
+                    if (LSPPackageManager.appList.isEmpty()) stringResource(R.string.manage_loading)
+                    else stringResource(R.string.manage_no_modules)
                 },
-                color = AppleText2,
+                fontFamily = FontFamily.Serif,
                 style = MaterialTheme.typography.headlineSmall
             )
         }
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxHeight(),
-            contentPadding = PaddingValues(horizontal = AppleDesign.PagePadding, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(AppleDesign.ItemSpacing)
-        ) {
+        LazyColumn(Modifier.fillMaxHeight()) {
             items(
                 items = viewModel.appList,
                 key = { it.first.app.packageName }
-            ) { item ->
+            ) {
                 var expanded by remember { mutableStateOf(false) }
-                val settingsIntent = remember { LSPPackageManager.getSettingsIntent(item.first.app.packageName) }
+                val settingsIntent = remember { LSPPackageManager.getSettingsIntent(it.first.app.packageName) }
                 AnywhereDropdown(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
@@ -77,23 +59,22 @@ fun ModuleManageBody() {
                     onLongClick = { expanded = true },
                     surface = {
                         AppItem(
-                            icon = LSPPackageManager.getIcon(item.first),
-                            label = item.first.label,
-                            packageName = item.first.app.packageName,
+                            icon = LSPPackageManager.getIcon(it.first),
+                            label = it.first.label,
+                            packageName = it.first.app.packageName,
                             additionalContent = {
                                 Text(
-                                    text = item.second.description,
-                                    color = AppleText2,
+                                    text = it.second.description,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                                 Text(
                                     text = buildAnnotatedString {
-                                        append(AnnotatedString("API", SpanStyle(color = AppleAccent)))
+                                        append(AnnotatedString("API", SpanStyle(color = MaterialTheme.colorScheme.secondary)))
                                         append("  ")
-                                        append(item.second.api.toString())
+                                        append(it.second.api.toString())
                                     },
                                     fontWeight = FontWeight.SemiBold,
-                                    color = AppleText,
+                                    fontFamily = FontFamily.Serif,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
@@ -101,9 +82,8 @@ fun ModuleManageBody() {
                     }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(text = item.first.label, color = AppleAccent) },
-                        onClick = {},
-                        enabled = false
+                        text = { Text(text = it.first.label, color = MaterialTheme.colorScheme.primary) },
+                        onClick = {}, enabled = false
                     )
                     if (settingsIntent != null) {
                         DropdownMenuItem(
@@ -116,14 +96,13 @@ fun ModuleManageBody() {
                         onClick = {
                             val intent = Intent(
                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", item.first.app.packageName, null)
+                                Uri.fromParts("package", it.first.app.packageName, null)
                             )
                             context.startActivity(intent)
                         }
                     )
                 }
             }
-            item { Spacer(Modifier.height(AppleDesign.NavBarBottomMargin + 16.dp)) }
         }
     }
 }

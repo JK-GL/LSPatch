@@ -44,9 +44,9 @@ import org.lsposed.lspatch.ui.theme.AppleBackground
 import org.lsposed.lspatch.ui.theme.XMCard
 import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.XMCard
-import org.lsposed.lspatch.ui.theme.XMColors2
+import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.XMCard
-import org.lsposed.lspatch.ui.theme.XMColors3
+import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.theme.AppleGreen

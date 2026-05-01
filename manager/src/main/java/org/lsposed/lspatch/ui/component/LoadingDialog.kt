@@ -12,9 +12,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.lsposed.lspatch.ui.theme.AppleAccent
 import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.AppleSurface
+import org.lsposed.lspatch.ui.theme.XMColors
 
 @Composable
 fun LoadingDialog() {
@@ -26,11 +25,11 @@ fun LoadingDialog() {
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(AppleDesign.CornerM))
-                .background(AppleSurface),
+                .background(XMColors.glassSurface),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(
-                color = AppleAccent,
+                color = XMColors.accent,
                 strokeWidth = 3.dp
             )
         }

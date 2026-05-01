@@ -42,31 +42,25 @@ object AppleDesign {
 }
 
 private val AppleDarkColors = darkColorScheme(
-    primary = AppleAccent,
+    primary = XMColors.accent,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFF283066),
-    onPrimaryContainer = Color(0xFFBBC3FF),
-    secondary = AppleText2,
-    onSecondary = Color.White,
-    secondaryContainer = AppleSurface3,
-    onSecondaryContainer = AppleText,
     background = XMColors.bgGradientMid,
-    onBackground = AppleText,
+    onBackground = XMColors.textPrimary,
     surface = XMColors.glassSurface,
-    onSurface = AppleText,
-    surfaceVariant = AppleSurface2,
-    onSurfaceVariant = AppleText2,
-    surfaceContainerLow = AppleSurface,
-    surfaceContainer = AppleSurface2,
-    surfaceContainerHigh = AppleSurface3,
-    outline = AppleSeparator,
-    outlineVariant = AppleSurface3,
-    error = AppleRed,
+    onSurface = XMColors.textPrimary,
+    surfaceVariant = XMColors.glassSurface,
+    onSurfaceVariant = XMColors.textSecondary,
+    surfaceContainerLow = XMColors.glassSurface,
+    surfaceContainer = XMColors.glassSurface,
+    surfaceContainerHigh = XMColors.glassSurface,
+    outline = XMColors.divider,
+    outlineVariant = XMColors.glassBorder,
+    error = XMColors.error,
     onError = Color.White,
-    inverseSurface = AppleText,
-    inverseOnSurface = AppleBackground,
+    inverseSurface = XMColors.textPrimary,
+    inverseOnSurface = XMColors.bgGradientMid,
     inversePrimary = Color(0xFF3D5AFE),
-    surfaceTint = AppleAccent
+    surfaceTint = XMColors.accent
 )
 
 private val AppleTypography = Typography(

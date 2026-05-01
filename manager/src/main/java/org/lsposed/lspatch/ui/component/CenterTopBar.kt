@@ -7,11 +7,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import org.lsposed.lspatch.ui.theme.AppleDesign
-import org.lsposed.lspatch.ui.theme.AppleText
+import org.lsposed.lspatch.ui.theme.XMColors
+import org.lsposed.lspatch.ui.theme.XMTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,15 +19,12 @@ fun CenterTopBar(text: String) {
         title = {
             Text(
                 text = text,
-                color = AppleText,
-                fontWeight = FontWeight.Bold,
-                fontSize = AppleDesign.TitleSize.sp,
-                letterSpacing = (-0.5).sp
+                style = XMTypography.title
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            titleContentColor = AppleText
+            containerColor = XMColors.bgGradientMid,
+            titleContentColor = XMColors.textPrimary
         ),
         modifier = Modifier.padding(horizontal = AppleDesign.PagePadding)
     )

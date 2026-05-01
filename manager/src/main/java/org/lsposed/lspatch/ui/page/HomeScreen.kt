@@ -44,14 +44,11 @@ import org.lsposed.lspatch.ui.theme.AppleBackground
 import org.lsposed.lspatch.ui.theme.XMCard
 import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.XMCard
-import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.XMCard
-import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.theme.AppleText2
 import org.lsposed.lspatch.ui.theme.AppleGreen
 import org.lsposed.lspatch.ui.theme.AppleRed
-import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.AppleSeparator
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 import org.lsposed.lspatch.util.ShizukuApi

@@ -28,10 +28,9 @@ import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
 import org.lsposed.lspatch.ui.theme.XMColors
-
+import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.LSPTheme
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
-
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +111,7 @@ private fun FloatingNavBar(navController: NavHostController) {
                             Spacer(Modifier.height(2.dp))
                             Text(
                                 text = stringResource(destination.label),
-                                fontSize = AppleDesign.TinySize.sp,
+                                fontSize = 10.sp,
                                 color = if (selected) XMColors.accent else XMColors.textSecondary,
                                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
                             )

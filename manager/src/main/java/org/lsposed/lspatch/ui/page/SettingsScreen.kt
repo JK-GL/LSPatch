@@ -44,14 +44,12 @@ import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.component.settings.SettingsSwitch
 import org.lsposed.lspatch.ui.theme.AppleBackground
-import org.lsposed.lspatch.ui.theme.AppleDesign
 import androidx.compose.ui.unit.dp
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
 import kotlinx.coroutines.launch
 import com.ramcosta.composedestinations.annotation.Destination
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable

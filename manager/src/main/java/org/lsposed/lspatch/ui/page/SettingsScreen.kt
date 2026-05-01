@@ -248,4 +248,3 @@ private fun DetailPatchLogs() {
         title = stringResource(R.string.settings_detail_patch_logs)
     )
 }
-    )

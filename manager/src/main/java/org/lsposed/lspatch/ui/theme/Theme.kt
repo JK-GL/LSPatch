@@ -41,10 +41,10 @@ object AppleDesign {
     val NavBarBottomMargin = 72.dp
 }
 
-private val AppleDarkColors = darkColorScheme(
+private val XMColorScheme = darkColorScheme(
     primary = XMColors.accent,
     onPrimary = Color.White,
-    background = XMColors.bgGradientMid,
+    background = Color.Transparent,
     onBackground = XMColors.textPrimary,
     surface = XMColors.glassSurface,
     onSurface = XMColors.textPrimary,
@@ -57,13 +57,10 @@ private val AppleDarkColors = darkColorScheme(
     outlineVariant = XMColors.glassBorder,
     error = XMColors.error,
     onError = Color.White,
-    inverseSurface = XMColors.textPrimary,
-    inverseOnSurface = XMColors.bgGradientMid,
-    inversePrimary = Color(0xFF3D5AFE),
     surfaceTint = XMColors.accent
 )
 
-private val AppleTypography = Typography(
+private val XMType = Typography(
     displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
     displayMedium = TextStyle(fontSize = 28.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
     displaySmall = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
@@ -89,5 +86,5 @@ fun LSPTheme(content: @Composable () -> Unit) {
             ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = false
         }
     }
-    MaterialTheme(colorScheme = AppleDarkColors, typography = AppleTypography, content = content)
+    MaterialTheme(colorScheme = XMColorScheme, typography = XMType, content = content)
 }

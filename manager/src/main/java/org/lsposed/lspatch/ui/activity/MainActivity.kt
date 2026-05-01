@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -13,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,10 +27,11 @@ import org.lsposed.lspatch.ui.page.NavGraphs
 import org.lsposed.lspatch.ui.page.appCurrentDestinationAsState
 import org.lsposed.lspatch.ui.page.destinations.Destination
 import org.lsposed.lspatch.ui.page.startAppDestination
-import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.theme.AppleDesign
 import org.lsposed.lspatch.ui.theme.LSPTheme
+import org.lsposed.lspatch.ui.theme.XMColors
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
+
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,18 +41,39 @@ class MainActivity : ComponentActivity() {
             LSPTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 CompositionLocalProvider(LocalSnackbarHost provides snackbarHostState) {
-                    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(XMColors.bgGradientStart, XMColors.bgGradientMid, XMColors.bgGradientEnd)))) {
+                    // 渐变背景包裹一切
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        XMColors.bgGradientStart,
+                                        XMColors.bgGradientMid,
+                                        XMColors.bgGradientEnd
+                                    )
+                                )
+                            )
+                    ) {
                         Scaffold(
-                            containerColor = XMColors.bgGradientMid,
-                            snackbarHost = { SnackbarHost(snackbarHostState, Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)) }
+                            containerColor = Color.Transparent,
+                            snackbarHost = {
+                                SnackbarHost(
+                                    snackbarHostState,
+                                    Modifier.padding(bottom = AppleDesign.NavBarBottomMargin + 16.dp)
+                                )
+                            }
                         ) { innerPadding ->
                             DestinationsNavHost(
-                                modifier = Modifier.padding(innerPadding).padding(bottom = AppleDesign.NavBarBottomMargin),
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                                    .padding(bottom = AppleDesign.NavBarBottomMargin),
                                 navGraph = NavGraphs.root,
                                 navController = navController
                             )
                         }
-                        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        // 悬浮胶囊导航栏
+                        Box(Modifier.align(Alignment.BottomCenter)) {
                             FloatingNavBar(navController)
                         }
                     }
@@ -79,6 +101,7 @@ private fun FloatingNavBar(navController: NavHostController) {
         Surface(
             shape = RoundedCornerShape(AppleDesign.CornerL),
             color = XMColors.glassSurface,
+            tonalElevation = 0.dp,
             shadowElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()

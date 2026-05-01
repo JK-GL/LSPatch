@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Api
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleSurface3
 
 @Composable
 fun SettingsSwitch(
@@ -22,7 +26,16 @@ fun SettingsSwitch(
     extraContent: (@Composable ColumnScope.() -> Unit)? = null
 ) {
     SettingsSlot(modifier, enabled, icon, title, desc, extraContent) {
-        Switch(checked = checked, onCheckedChange = null)
+        Switch(
+            checked = checked,
+            onCheckedChange = null,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = AppleAccent,
+                uncheckedThumbColor = Color.White,
+                uncheckedTrackColor = AppleSurface3
+            )
+        )
     }
 }
 

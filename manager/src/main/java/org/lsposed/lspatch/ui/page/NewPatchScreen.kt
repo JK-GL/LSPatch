@@ -47,6 +47,7 @@ import org.lsposed.lspatch.ui.component.ShimmerAnimation
 import org.lsposed.lspatch.ui.component.settings.SettingsCheckBox
 import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.page.destinations.SelectAppsScreenDestination
+import org.lsposed.lspatch.ui.theme.*
 import org.lsposed.lspatch.ui.util.LocalSnackbarHost
 import org.lsposed.lspatch.ui.util.isScrolledToEnd
 import org.lsposed.lspatch.ui.util.lastItemIndex
@@ -63,7 +64,6 @@ const val ACTION_STORAGE = 0
 const val ACTION_APPLIST = 1
 const val ACTION_INTENT_INSTALL = 2
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun NewPatchScreen(
@@ -82,9 +82,7 @@ fun NewPatchScreen(
         }
         runBlocking {
             LSPPackageManager.getAppInfoFromApks(apks)
-                .onSuccess {
-                    viewModel.dispatch(ViewAction.ConfigurePatch(it.first()))
-                }
+                .onSuccess { viewModel.dispatch(ViewAction.ConfigurePatch(it.first())) }
                 .onFailure {
                     lspApp.globalScope.launch { snackbarHost.showSnackbar(it.message ?: errorUnknown) }
                     navigator.navigateUp()
@@ -94,30 +92,20 @@ fun NewPatchScreen(
 
     var showSelectModuleDialog by remember { mutableStateOf(false) }
     val noXposedModules = stringResource(R.string.patch_no_xposed_module)
-    val storageModuleLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { apks ->
-            if (apks.isEmpty()) {
-                return@rememberLauncherForActivityResult
-            }
-            runBlocking {
-                LSPPackageManager.getAppInfoFromApks(apks).onSuccess { it ->
-                    viewModel.embeddedModules = it.filter { it.isXposedModule }.ifEmpty {
-                        lspApp.globalScope.launch {
-                            snackbarHost.showSnackbar(noXposedModules)
-                        }
-                        return@onSuccess
-                    }
-                }.onFailure {
-                    lspApp.globalScope.launch {
-                        snackbarHost.showSnackbar(
-                            it.message ?: errorUnknown
-                        )
-                    }
+    val storageModuleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { apks ->
+        if (apks.isEmpty()) return@rememberLauncherForActivityResult
+        runBlocking {
+            LSPPackageManager.getAppInfoFromApks(apks).onSuccess { apps ->
+                viewModel.embeddedModules = apps.filter { it.isXposedModule }.ifEmpty {
+                    lspApp.globalScope.launch { snackbarHost.showSnackbar(noXposedModules) }
+                    return@onSuccess
                 }
+            }.onFailure {
+                lspApp.globalScope.launch { snackbarHost.showSnackbar(it.message ?: errorUnknown) }
             }
         }
+    }
 
-    Log.d(TAG, "PatchState: ${viewModel.patchState}")
     when (viewModel.patchState) {
         PatchState.INIT -> {
             LaunchedEffect(Unit) {
@@ -127,23 +115,17 @@ fun NewPatchScreen(
                         storageLauncher.launch(arrayOf("application/vnd.android.package-archive"))
                         viewModel.dispatch(ViewAction.DoneInit)
                     }
-
                     ACTION_APPLIST -> {
                         navigator.navigate(SelectAppsScreenDestination(false, null))
                         viewModel.dispatch(ViewAction.DoneInit)
                     }
-
                     ACTION_INTENT_INSTALL -> {
                         runBlocking {
                             data?.let { uri ->
                                 LSPPackageManager.getAppInfoFromApks(listOf(uri)).onSuccess {
                                     viewModel.dispatch(ViewAction.ConfigurePatch(it.first()))
                                 }.onFailure {
-                                    lspApp.globalScope.launch {
-                                        snackbarHost.showSnackbar(
-                                            it.message ?: errorUnknown
-                                        )
-                                    }
+                                    lspApp.globalScope.launch { snackbarHost.showSnackbar(it.message ?: errorUnknown) }
                                     navigator.navigateUp()
                                 }
                             }
@@ -154,7 +136,6 @@ fun NewPatchScreen(
         }
         PatchState.SELECTING -> {
             resultRecipient.onNavResult {
-                Log.d(TAG, "onNavResult: $it")
                 when (it) {
                     is NavResult.Canceled -> navigator.navigateUp()
                     is NavResult.Value -> {
@@ -166,25 +147,27 @@ fun NewPatchScreen(
         }
         else -> {
             Scaffold(
+                containerColor = AppleBackground,
                 topBar = {
                     when (viewModel.patchState) {
                         PatchState.CONFIGURING -> ConfiguringTopBar { navigator.navigateUp() }
-                        PatchState.PATCHING,
-                        PatchState.FINISHED,
-                        PatchState.ERROR -> CenterAlignedTopAppBar(title = { Text(viewModel.patchApp.app.packageName) })
+                        PatchState.PATCHING, PatchState.FINISHED, PatchState.ERROR -> CenterTopAppBar(
+                            title = { Text(viewModel.patchApp.app.packageName, color = AppleText) },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = AppleBackground)
+                        )
                         else -> Unit
                     }
                 },
                 floatingActionButton = {
                     if (viewModel.patchState == PatchState.CONFIGURING) {
-                        ConfiguringFab()
+                        Box(Modifier.padding(bottom = AppleDesign.NavBarBottomMargin)) {
+                            ConfiguringFab()
+                        }
                     }
                 }
             ) { innerPadding ->
                 if (viewModel.patchState == PatchState.CONFIGURING) {
-                    PatchOptionsBody(Modifier.padding(innerPadding)) {
-                        showSelectModuleDialog = true
-                    }
+                    PatchOptionsBody(Modifier.padding(innerPadding)) { showSelectModuleDialog = true }
                     resultRecipient.onNavResult {
                         if (it is NavResult.Value) {
                             val result = it.value as SelectAppsResult.MultipleApps
@@ -197,11 +180,13 @@ fun NewPatchScreen(
             }
 
             if (showSelectModuleDialog) {
-                AlertDialog(onDismissRequest = { showSelectModuleDialog = false },
+                AlertDialog(
+                    onDismissRequest = { showSelectModuleDialog = false },
                     confirmButton = {},
                     dismissButton = {
-                        TextButton(content = { Text(stringResource(android.R.string.cancel)) },
-                            onClick = { showSelectModuleDialog = false })
+                        TextButton(onClick = { showSelectModuleDialog = false }) {
+                            Text(stringResource(android.R.string.cancel))
+                        }
                     },
                     title = {
                         Text(
@@ -211,28 +196,34 @@ fun NewPatchScreen(
                         )
                     },
                     text = {
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            TextButton(modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            TextButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.textButtonColors(contentColor = AppleAccent),
                                 onClick = {
                                     storageModuleLauncher.launch(arrayOf("application/vnd.android.package-archive"))
                                     showSelectModuleDialog = false
-                                }) {
+                                }
+                            ) {
                                 Text(
                                     modifier = Modifier.padding(vertical = 8.dp),
                                     text = stringResource(R.string.patch_from_storage),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
-                            TextButton(modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
+                            TextButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.textButtonColors(contentColor = AppleAccent),
                                 onClick = {
                                     navigator.navigate(
-                                        SelectAppsScreenDestination(true,
-                                            viewModel.embeddedModules.mapTo(ArrayList()) { it.app.packageName })
+                                        SelectAppsScreenDestination(
+                                            true,
+                                            viewModel.embeddedModules.mapTo(ArrayList()) { it.app.packageName }
+                                        )
                                     )
                                     showSelectModuleDialog = false
-                                }) {
+                                }
+                            ) {
                                 Text(
                                     modifier = Modifier.padding(vertical = 8.dp),
                                     text = stringResource(R.string.patch_from_applist),
@@ -240,23 +231,23 @@ fun NewPatchScreen(
                                 )
                             }
                         }
-                    })
+                    }
+                )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfiguringTopBar(onBackClick: () -> Unit) {
     TopAppBar(
-        title = { Text(stringResource(R.string.screen_new_patch)) },
+        title = { Text(stringResource(R.string.screen_new_patch), color = AppleText) },
         navigationIcon = {
-            IconButton(
-                onClick = onBackClick,
-                content = { Icon(Icons.Outlined.ArrowBack, null) }
-            )
-        }
+            IconButton(onClick = onBackClick) {
+                Icon(Icons.Outlined.ArrowBack, null, tint = AppleText)
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = AppleBackground)
     )
 }
 
@@ -266,6 +257,8 @@ private fun ConfiguringFab() {
     ExtendedFloatingActionButton(
         text = { Text(stringResource(R.string.patch_start)) },
         icon = { Icon(Icons.Outlined.AutoFixHigh, null) },
+        containerColor = AppleAccent,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         onClick = { viewModel.dispatch(ViewAction.SubmitPatch) }
     )
 }
@@ -282,25 +275,30 @@ private fun sigBypassLvStr(level: Int) = when (level) {
 private fun PatchOptionsBody(modifier: Modifier, onAddEmbed: () -> Unit) {
     val viewModel = viewModel<NewPatchViewModel>()
 
-    Column(modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = AppleDesign.PagePadding)
+    ) {
         Text(
             text = viewModel.patchApp.label,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 24.dp)
+            style = MaterialTheme.typography.headlineLarge,
+            color = AppleText
         )
         Text(
             text = viewModel.patchApp.app.packageName,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(horizontal = 24.dp)
+            style = MaterialTheme.typography.bodyMedium,
+            color = AppleText2
         )
         Text(
             text = stringResource(R.string.patch_mode),
             style = MaterialTheme.typography.titleLarge,
+            color = AppleText,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 24.dp, bottom = 12.dp)
         )
-        SelectionColumn(Modifier.padding(horizontal = 24.dp)) {
+        SelectionColumn(Modifier.padding(bottom = 8.dp)) {
             SelectionItem(
                 selected = viewModel.useManager,
                 onClick = { viewModel.useManager = true },
@@ -315,10 +313,9 @@ private fun PatchOptionsBody(modifier: Modifier, onAddEmbed: () -> Unit) {
                 title = stringResource(R.string.patch_integrated),
                 desc = stringResource(R.string.patch_integrated_desc),
                 extraContent = {
-                    TextButton(
-                        onClick = onAddEmbed,
-                        content = { Text(text = stringResource(R.string.patch_embed_modules), style = MaterialTheme.typography.bodyLarge) }
-                    )
+                    TextButton(onClick = onAddEmbed) {
+                        Text(text = stringResource(R.string.patch_embed_modules), style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
             )
         }
@@ -337,7 +334,6 @@ private fun PatchOptionsBody(modifier: Modifier, onAddEmbed: () -> Unit) {
             title = stringResource(R.string.patch_override_version_code),
             desc = stringResource(R.string.patch_override_version_code_desc)
         )
-
         SettingsCheckBox(
             modifier = Modifier.clickable { viewModel.injectDex = !viewModel.injectDex },
             checked = viewModel.injectDex,
@@ -345,7 +341,6 @@ private fun PatchOptionsBody(modifier: Modifier, onAddEmbed: () -> Unit) {
             title = stringResource(R.string.patch_inject_dex),
             desc = stringResource(R.string.patch_inject_dex_desc)
         )
-
         var bypassExpanded by remember { mutableStateOf(false) }
         AnywhereDropdown(
             expanded = bypassExpanded,
@@ -359,21 +354,22 @@ private fun PatchOptionsBody(modifier: Modifier, onAddEmbed: () -> Unit) {
                 )
             }
         ) {
-            repeat(3) {
+            repeat(3) { idx ->
                 DropdownMenuItem(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            RadioButton(selected = viewModel.sigBypassLevel == it, onClick = { viewModel.sigBypassLevel = it })
-                            Text(sigBypassLvStr(it))
+                            RadioButton(selected = viewModel.sigBypassLevel == idx, onClick = { viewModel.sigBypassLevel = idx })
+                            Text(sigBypassLvStr(idx))
                         }
                     },
                     onClick = {
-                        viewModel.sigBypassLevel = it
+                        viewModel.sigBypassLevel = idx
                         bypassExpanded = false
                     }
                 )
             }
         }
+        Spacer(Modifier.height(AppleDesign.NavBarBottomMargin + 16.dp))
     }
 }
 
@@ -384,9 +380,7 @@ private fun DoPatchBody(modifier: Modifier, navigator: DestinationsNavigator) {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        if (viewModel.logs.isEmpty()) {
-            viewModel.dispatch(ViewAction.LaunchPatch)
-        }
+        if (viewModel.logs.isEmpty()) viewModel.dispatch(ViewAction.LaunchPatch)
     }
 
     BoxWithConstraints(modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
@@ -462,9 +456,7 @@ private fun DoPatchBody(modifier: Modifier, navigator: DestinationsNavigator) {
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 if (!ShizukuApi.isPermissionGranted) {
-                                    scope.launch {
-                                        snackbarHost.showSnackbar(shizukuUnavailable)
-                                    }
+                                    scope.launch { snackbarHost.showSnackbar(shizukuUnavailable) }
                                 } else {
                                     installing = true
                                 }
@@ -502,6 +494,7 @@ private fun InstallDialog(patchApp: AppInfo, onFinish: (Int, String?) -> Unit) {
     val scope = rememberCoroutineScope()
     var uninstallFirst by remember { mutableStateOf(ShizukuApi.isPackageInstalledWithoutPatch(patchApp.app.packageName)) }
     var installing by remember { mutableStateOf(0) }
+
     suspend fun doInstall() {
         Log.i(TAG, "Installing app ${patchApp.app.packageName}")
         installing = 1
@@ -512,9 +505,7 @@ private fun InstallDialog(patchApp: AppInfo, onFinish: (Int, String?) -> Unit) {
     }
 
     LaunchedEffect(Unit) {
-        if (!uninstallFirst) {
-            doInstall()
-        }
+        if (!uninstallFirst) doInstall()
     }
 
     if (uninstallFirst) {
@@ -524,27 +515,20 @@ private fun InstallDialog(patchApp: AppInfo, onFinish: (Int, String?) -> Unit) {
                 TextButton(
                     onClick = {
                         scope.launch {
-                            Log.i(TAG, "Uninstalling app ${patchApp.app.packageName}")
                             uninstallFirst = false
                             installing = 2
                             val (status, message) = LSPPackageManager.uninstall(patchApp.app.packageName)
                             installing = 0
-                            Log.i(TAG, "Uninstallation end: $status, $message")
-                            if (status == PackageInstaller.STATUS_SUCCESS) {
-                                doInstall()
-                            } else {
-                                onFinish(status, message)
-                            }
+                            if (status == PackageInstaller.STATUS_SUCCESS) doInstall()
+                            else onFinish(status, message)
                         }
-                    },
-                    content = { Text(stringResource(android.R.string.ok)) }
-                )
+                    }
+                ) { Text(stringResource(android.R.string.ok)) }
             },
             dismissButton = {
-                TextButton(
-                    onClick = { onFinish(LSPPackageManager.STATUS_USER_CANCELLED, "User cancelled") },
-                    content = { Text(stringResource(android.R.string.cancel)) }
-                )
+                TextButton(onClick = { onFinish(LSPPackageManager.STATUS_USER_CANCELLED, "User cancelled") }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
             },
             title = {
                 Text(
@@ -565,6 +549,12 @@ private fun InstallDialog(patchApp: AppInfo, onFinish: (Int, String?) -> Unit) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(if (installing == 1) R.string.installing else R.string.uninstalling),
+                    textAlign = TextAlign.Center
+                )
+            }
+        )
+    }
+}
                     fontFamily = FontFamily.Serif,
                     textAlign = TextAlign.Center
                 )

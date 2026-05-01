@@ -7,18 +7,33 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -28,6 +43,10 @@ import kotlinx.parcelize.Parcelize
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.ui.component.AppItem
 import org.lsposed.lspatch.ui.component.SearchAppBar
+import org.lsposed.lspatch.ui.theme.AppleAccent
+import org.lsposed.lspatch.ui.theme.AppleBackground
+import org.lsposed.lspatch.ui.theme.AppleDesign
+import org.lsposed.lspatch.ui.theme.AppleText
 import org.lsposed.lspatch.ui.viewmodel.SelectAppsViewModel
 import org.lsposed.lspatch.util.LSPPackageManager
 import org.lsposed.lspatch.util.LSPPackageManager.AppInfo
@@ -38,7 +57,6 @@ sealed class SelectAppsResult : Parcelable {
     data class MultipleApps(val selected: List<AppInfo>) : SelectAppsResult()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun SelectAppsScreen(
@@ -47,31 +65,33 @@ fun SelectAppsScreen(
     initialSelected: ArrayList<String>?,
 ) {
     val viewModel = viewModel<SelectAppsViewModel>()
-
     var searchPackage by remember { mutableStateOf("") }
+
     val filter: (AppInfo) -> Boolean = {
         val packageLowerCase = searchPackage.toLowerCase(Locale.current)
-        val contains = it.label.toLowerCase(Locale.current).contains(packageLowerCase) || it.app.packageName.contains(packageLowerCase)
+        val contains = it.label.toLowerCase(Locale.current).contains(packageLowerCase) ||
+            it.app.packageName.contains(packageLowerCase)
         if (multiSelect) contains && it.isXposedModule
         else contains && it.app.flags and ApplicationInfo.FLAG_SYSTEM == 0
     }
 
     LaunchedEffect(Unit) {
         viewModel.filterAppList(false, filter)
-        initialSelected?.let {
-            val tmp = initialSelected.toSet()
-            viewModel.multiSelected.addAll(LSPPackageManager.appList.filter { tmp.contains(it.app.packageName) })
+        initialSelected?.let { list ->
+            val selectedSet = list.toSet()
+            viewModel.multiSelected.addAll(
+                LSPPackageManager.appList.filter { selectedSet.contains(it.app.packageName) }
+            )
         }
     }
 
-    BackHandler {
-        navigator.navigateBack()
-    }
+    BackHandler { navigator.navigateBack() }
 
     Scaffold(
+        containerColor = AppleBackground,
         topBar = {
             SearchAppBar(
-                title = { Text(stringResource(R.string.screen_select_apps)) },
+                title = { Text(stringResource(R.string.screen_select_apps), color = AppleText) },
                 searchText = searchPackage,
                 onSearchTextChange = {
                     searchPackage = it
@@ -81,14 +101,22 @@ fun SelectAppsScreen(
                     searchPackage = ""
                     viewModel.filterAppList(false, filter)
                 },
-                onBackClick = {
-                    navigator.navigateBack()
-                }
+                onBackClick = { navigator.navigateBack() }
             )
         },
         floatingActionButton = {
-            if (multiSelect) MultiSelectFab {
-                navigator.navigateBack(SelectAppsResult.MultipleApps(viewModel.multiSelected))
+            if (multiSelect) {
+                Box(Modifier.padding(bottom = AppleDesign.NavBarBottomMargin)) {
+                    FloatingActionButton(
+                        containerColor = AppleAccent,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        onClick = {
+                            navigator.navigateBack(SelectAppsResult.MultipleApps(viewModel.multiSelected))
+                        }
+                    ) {
+                        Icon(Icons.Outlined.Done, stringResource(R.string.add))
+                    }
+                }
             }
         }
     ) { innerPadding ->
@@ -99,40 +127,37 @@ fun SelectAppsScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if (multiSelect) MultiSelect()
-            else SingleSelect {
-                navigator.navigateBack(SelectAppsResult.SingleApp(it))
+            if (multiSelect) {
+                MultiSelect()
+            } else {
+                SingleSelect { navigator.navigateBack(SelectAppsResult.SingleApp(it)) }
             }
         }
     }
-}
-
-@Composable
-private fun MultiSelectFab(onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = onClick,
-        content = { Icon(Icons.Outlined.Done, stringResource(R.string.add)) }
-    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SingleSelect(onSelect: (AppInfo) -> Unit) {
     val viewModel = viewModel<SelectAppsViewModel>()
-    LazyColumn {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = AppleDesign.PagePadding, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(AppleDesign.ItemSpacing)
+    ) {
         items(
             items = viewModel.filteredList,
             key = { it.app.packageName }
-        ) {
+        ) { app ->
             AppItem(
                 modifier = Modifier
                     .animateItem(spring(stiffness = Spring.StiffnessLow))
-                    .clickable { onSelect(it) },
-                icon = LSPPackageManager.getIcon(it),
-                label = it.label,
-                packageName = it.app.packageName
+                    .clickable { onSelect(app) },
+                icon = LSPPackageManager.getIcon(app),
+                label = app.label,
+                packageName = app.app.packageName
             )
         }
+        item { Spacer(Modifier.height(AppleDesign.NavBarBottomMargin + 16.dp)) }
     }
 }
 
@@ -140,24 +165,28 @@ private fun SingleSelect(onSelect: (AppInfo) -> Unit) {
 @Composable
 private fun MultiSelect() {
     val viewModel = viewModel<SelectAppsViewModel>()
-    LazyColumn {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = AppleDesign.PagePadding, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(AppleDesign.ItemSpacing)
+    ) {
         items(
             items = viewModel.filteredList,
             key = { it.app.packageName }
-        ) {
-            val checked = viewModel.multiSelected.contains(it)
+        ) { app ->
+            val checked = viewModel.multiSelected.contains(app)
             AppItem(
                 modifier = Modifier
                     .animateItem(spring(stiffness = Spring.StiffnessLow))
                     .clickable {
-                        if (checked) viewModel.multiSelected.remove(it)
-                        else viewModel.multiSelected.add(it)
+                        if (checked) viewModel.multiSelected.remove(app)
+                        else viewModel.multiSelected.add(app)
                     },
-                icon = LSPPackageManager.getIcon(it),
-                label = it.label,
-                packageName = it.app.packageName,
+                icon = LSPPackageManager.getIcon(app),
+                label = app.label,
+                packageName = app.app.packageName,
                 checked = checked
             )
         }
+        item { Spacer(Modifier.height(AppleDesign.NavBarBottomMargin + 16.dp)) }
     }
 }

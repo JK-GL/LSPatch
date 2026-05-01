@@ -1,15 +1,19 @@
 package org.lsposed.lspatch.ui.component.settings
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.lsposed.lspatch.ui.theme.*
 
 @Composable
 fun SettingsSlot(
@@ -21,42 +25,51 @@ fun SettingsSlot(
     extraContent: (@Composable ColumnScope.() -> Unit)? = null,
     action: (@Composable RowScope.() -> Unit)?,
 ) {
-    Row(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .alpha(if (enabled) 1f else 0.5f)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .alpha(if (enabled) 1f else 0.5f),
+        shape = RoundedCornerShape(AppleDesign.CornerM),
+        color = AppleSurface
     ) {
-        Box(
-            modifier = modifier.size(24.dp),
-            contentAlignment = Alignment.Center,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppleDesign.CardPadding, vertical = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
+                    tint = AppleAccent,
+                    modifier = Modifier.size(22.dp)
                 )
+            } else {
+                Spacer(Modifier.width(2.dp))
             }
-        }
-        Column(Modifier.weight(1f).padding(vertical = 6.dp)) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
-            Column {
-                if (desc != null) {
+
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    color = AppleText,
+                    fontSize = AppleDesign.BodySize.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                if (!desc.isNullOrBlank()) {
+                    Spacer(Modifier.height(3.dp))
                     Text(
                         text = desc,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier
-                            .alpha(0.75f)
-                            .padding(top = 4.dp)
+                        color = AppleText2,
+                        fontSize = AppleDesign.SubSize.sp
                     )
                 }
                 extraContent?.invoke(this)
             }
+
+            action?.invoke(this)
         }
-        action?.invoke(this)
     }
 }
 

@@ -2,10 +2,12 @@ package org.lsposed.lspatch.ui.component
 
 import android.graphics.drawable.GradientDrawable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material3.*
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,9 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import org.lsposed.lspatch.ui.theme.LSPTheme
-import org.lsposed.lspatch.ui.theme.XMColors
-import org.lsposed.lspatch.ui.theme.XMDimensions
-import org.lsposed.lspatch.ui.theme.XMTypography
 
 @Composable
 fun AppItem(
@@ -32,32 +31,43 @@ fun AppItem(
     rightIcon: (@Composable () -> Unit)? = null,
     additionalContent: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
-    if (checked != null && rightIcon != null) {
-        throw IllegalArgumentException()
-    }
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(XMDimensions.cornerM),
-        color = XMColors.glassSurface
+    if (checked != null && rightIcon != null)
+        throw IllegalArgumentException("`checked` and `rightIcon` should not be both set")
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(XMDimensions.cardPadding),
-            horizontalArrangement = Arrangement.spacedBy(XMDimensions.spaceM),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(bitmap = icon, contentDescription = label, tint = Color.Unspecified, modifier = Modifier.size(XMDimensions.avatarSize))
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(label, style = XMTypography.subheadline, color = XMColors.textPrimary)
-                Text(text = packageName, color = XMColors.textSecondary, fontFamily = FontFamily.Monospace, style = XMTypography.caption)
+            Icon(
+                bitmap = icon,
+                contentDescription = label,
+                tint = Color.Unspecified
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(1.dp)
+            ) {
+                Text(label)
+                Text(
+                    text = packageName,
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodySmall
+                )
                 additionalContent?.invoke(this)
             }
             if (checked != null) {
-                Checkbox(checked = checked, onCheckedChange = null,
-                    colors = CheckboxDefaults.colors(checkedColor = XMColors.accent, uncheckedColor = XMColors.textSecondary, checkmarkColor = Color.White))
+                Checkbox(
+                    checked = checked,
+                    onCheckedChange = null,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
             }
-            if (rightIcon != null) { rightIcon() }
-            else if (checked == null) {
-                Icon(Icons.Filled.ArrowForwardIos, null, tint = XMColors.textSecondary.copy(alpha = 0.65f), modifier = Modifier.size(14.dp))
+            if (rightIcon != null) {
+                rightIcon()
             }
         }
     }
@@ -69,7 +79,12 @@ private fun AppItemPreview() {
     LSPTheme {
         val shape = GradientDrawable()
         shape.shape = GradientDrawable.RECTANGLE
-        shape.setColor(androidx.compose.material3.MaterialTheme.colorScheme.primary.toArgb())
-        AppItem(icon = shape.toBitmap().asImageBitmap(), label = "Sample", packageName = "org.lsposed.sample")
+        shape.setColor(MaterialTheme.colorScheme.primary.toArgb())
+        AppItem(
+            icon = shape.toBitmap().asImageBitmap(),
+            label = "Sample App",
+            packageName = "org.lsposed.sample",
+            rightIcon = { Icon(Icons.Filled.ArrowForwardIos, null) }
+        )
     }
 }

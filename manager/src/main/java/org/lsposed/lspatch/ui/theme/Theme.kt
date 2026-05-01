@@ -1,90 +1,36 @@
 package org.lsposed.lspatch.ui.theme
-
 import android.app.Activity
+import android.os.Build
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
-
-val AppleBackground = XMColors.bgGradientMid
-val AppleSurface = XMColors.glassSurface
-val AppleSurface2 = XMColors.glassSurface
-val AppleSurface3 = Color(0x40FFFFFF)
-val AppleText = XMColors.textPrimary
-val AppleText2 = XMColors.textSecondary
-val AppleAccent = XMColors.accent
-val AppleSeparator = XMColors.divider
-val AppleRed = XMColors.error
-val AppleGreen = XMColors.success
-
-object AppleDesign {
-    val CornerS = 12.dp
-    val CornerM = 16.dp
-    val CornerL = 24.dp
-    const val TitleSize = 28
-    const val HeadlineSize = 20
-    const val BodySize = 16
-    const val SubSize = 14
-    const val CaptionSize = 12
-    const val TinySize = 10
-    val PagePadding = 16.dp
-    val CardPadding = 16.dp
-    val ItemSpacing = 12.dp
-    val NavBarHeight = 56.dp
-    val NavBarBottomMargin = 72.dp
-}
-
-private val XMColorScheme = darkColorScheme(
-    primary = XMColors.accent,
-    onPrimary = Color.White,
-    background = Color.Transparent,
-    onBackground = XMColors.textPrimary,
-    surface = XMColors.glassSurface,
-    onSurface = XMColors.textPrimary,
-    surfaceVariant = XMColors.glassSurface,
-    onSurfaceVariant = XMColors.textSecondary,
-    surfaceContainerLow = XMColors.glassSurface,
-    surfaceContainer = XMColors.glassSurface,
-    surfaceContainerHigh = XMColors.glassSurface,
-    outline = XMColors.divider,
-    outlineVariant = XMColors.glassBorder,
-    error = XMColors.error,
-    onError = Color.White,
-    surfaceTint = XMColors.accent
-)
-
-private val XMType = Typography(
-    displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
-    displayMedium = TextStyle(fontSize = 28.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.5).sp),
-    displaySmall = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold),
-    headlineLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
-    headlineMedium = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
-    titleLarge = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-    titleSmall = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
-    bodyLarge = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal),
-    bodyMedium = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal),
-    bodySmall = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Normal),
-    labelLarge = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
-    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-    labelSmall = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Medium)
-)
-
 @Composable
-fun LSPTheme(content: @Composable () -> Unit) {
+fun LSPTheme(
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    enableDynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        enableDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        isDarkTheme -> darkColorScheme()
+        else -> lightColorScheme()
+    }
     val view = LocalView.current
-    if (!view.isInEditMode) {
         SideEffect {
-            (view.context as Activity).window.statusBarColor = XMColors.bgGradientStart.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = false
+            (view.context as Activity).window.statusBarColor = colorScheme.background.toArgb()
         }
     }
-    MaterialTheme(colorScheme = XMColorScheme, typography = XMType, content = content)
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
 }

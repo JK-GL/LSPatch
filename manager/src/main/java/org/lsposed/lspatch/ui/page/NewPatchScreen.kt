@@ -151,7 +151,7 @@ fun NewPatchScreen(
                 topBar = {
                     when (viewModel.patchState) {
                         PatchState.CONFIGURING -> ConfiguringTopBar { navigator.navigateUp() }
-                        PatchState.PATCHING, PatchState.FINISHED, PatchState.ERROR -> CenterTopAppBar(
+                        PatchState.PATCHING, PatchState.FINISHED, PatchState.ERROR -> CenterAlignedTopAppBar(
                             title = { Text(viewModel.patchApp.app.packageName, color = AppleText) },
                             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = AppleBackground)
                         )
@@ -549,13 +549,6 @@ private fun InstallDialog(patchApp: AppInfo, onFinish: (Int, String?) -> Unit) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(if (installing == 1) R.string.installing else R.string.uninstalling),
-                    textAlign = TextAlign.Center
-                )
-            }
-        )
-    }
-}
-                    fontFamily = FontFamily.Serif,
                     textAlign = TextAlign.Center
                 )
             }

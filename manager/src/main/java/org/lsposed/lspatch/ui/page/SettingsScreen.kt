@@ -6,36 +6,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Ballot
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.launch
 import org.lsposed.lspatch.R
 import org.lsposed.lspatch.config.Configs
 import org.lsposed.lspatch.config.MyKeyStore
@@ -43,33 +32,24 @@ import org.lsposed.lspatch.ui.component.AnywhereDropdown
 import org.lsposed.lspatch.ui.component.CenterTopBar
 import org.lsposed.lspatch.ui.component.settings.SettingsItem
 import org.lsposed.lspatch.ui.component.settings.SettingsSwitch
-import org.lsposed.lspatch.ui.theme.AppleBackground
-import org.lsposed.lspatch.ui.theme.AppleDesign
-import androidx.compose.ui.unit.dp
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore
-import kotlinx.coroutines.launch
-import com.ramcosta.composedestinations.annotation.Destination
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun SettingsScreen() {
     Scaffold(
-        containerColor = AppleBackground,
         topBar = { CenterTopBar(stringResource(BottomBarDestination.Settings.label)) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = AppleDesign.PagePadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(Modifier.height(8.dp))
             KeyStore()
-            Spacer(Modifier.height(AppleDesign.ItemSpacing))
             DetailPatchLogs()
-            Spacer(Modifier.height(AppleDesign.NavBarBottomMargin))
         }
     }
 }
@@ -81,6 +61,7 @@ private fun KeyStore() {
     val scope = rememberCoroutineScope()
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+
     AnywhereDropdown(
         expanded = expanded,
         onDismissRequest = { expanded = false },
@@ -93,14 +74,14 @@ private fun KeyStore() {
             )
         }
     ) {
-        androidx.compose.material3.DropdownMenuItem(
+        DropdownMenuItem(
             text = { Text(stringResource(R.string.settings_keystore_default)) },
             onClick = {
                 scope.launch { MyKeyStore.reset() }
                 expanded = false
             }
         )
-        androidx.compose.material3.DropdownMenuItem(
+        DropdownMenuItem(
             text = { Text(stringResource(R.string.settings_keystore_custom)) },
             onClick = {
                 expanded = false
@@ -108,15 +89,18 @@ private fun KeyStore() {
             }
         )
     }
+
     if (showDialog) {
         var wrongKeystore by rememberSaveable { mutableStateOf(false) }
         var wrongPassword by rememberSaveable { mutableStateOf(false) }
         var wrongAliasName by rememberSaveable { mutableStateOf(false) }
         var wrongAliasPassword by rememberSaveable { mutableStateOf(false) }
+
         var path by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var alias by rememberSaveable { mutableStateOf("") }
         var aliasPassword by rememberSaveable { mutableStateOf("") }
+
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
             context.contentResolver.openInputStream(uri).use { input ->
@@ -126,6 +110,7 @@ private fun KeyStore() {
             }
             path = uri.path ?: ""
         }
+
         AlertDialog(
             onDismissRequest = { expanded = false; showDialog = false },
             confirmButton = {
@@ -136,6 +121,7 @@ private fun KeyStore() {
                         wrongPassword = false
                         wrongAliasName = false
                         wrongAliasPassword = false
+
                         if (path.isEmpty()) {
                             wrongKeystore = true
                             return@TextButton
@@ -147,7 +133,9 @@ private fun KeyStore() {
                             }
                         } catch (e: IOException) {
                             wrongKeystore = true
-                            if (e.message == "KeyStore integrity check failed.") wrongPassword = true
+                            if (e.message == "KeyStore integrity check failed.") {
+                                wrongPassword = true
+                            }
                             return@TextButton
                         }
                         if (!keyStore.containsAlias(alias)) {
@@ -160,11 +148,11 @@ private fun KeyStore() {
                             wrongAliasPassword = true
                             return@TextButton
                         }
+
                         scope.launch { MyKeyStore.setCustom(password, alias, aliasPassword) }
                         expanded = false
                         showDialog = false
-                    }
-                )
+                    })
             },
             dismissButton = {
                 TextButton(
@@ -187,9 +175,12 @@ private fun KeyStore() {
                     val interactionSource = remember { MutableInteractionSource() }
                     LaunchedEffect(interactionSource) {
                         interactionSource.interactions.collect { interaction ->
-                            if (interaction is PressInteraction.Release) launcher.launch("*/*")
+                            if (interaction is PressInteraction.Release) {
+                                launcher.launch("*/*")
+                            }
                         }
                     }
+
                     val wrongText = when {
                         wrongAliasPassword -> stringResource(R.string.settings_keystore_wrong_alias_password)
                         wrongAliasName -> stringResource(R.string.settings_keystore_wrong_alias)
@@ -202,6 +193,7 @@ private fun KeyStore() {
                         text = wrongText ?: stringResource(R.string.settings_keystore_desc),
                         color = if (wrongText != null) MaterialTheme.colorScheme.error else Color.Unspecified
                     )
+
                     OutlinedTextField(
                         value = path,
                         onValueChange = { path = it },

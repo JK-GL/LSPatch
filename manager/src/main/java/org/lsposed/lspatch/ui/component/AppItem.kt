@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -38,6 +39,7 @@ fun AppItem(
 ) {
     if (checked != null && rightIcon != null)
         throw IllegalArgumentException("checked and rightIcon should not be both set")
+    val clickableMod = if (onClick != null) Modifier.clip(RoundedCornerShape(16.dp)).clickable { onClick() } else Modifier
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -48,7 +50,7 @@ fun AppItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+                .then(clickableMod)
                 .padding(horizontal = 18.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically

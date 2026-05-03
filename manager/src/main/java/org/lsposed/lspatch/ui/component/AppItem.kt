@@ -39,18 +39,18 @@ fun AppItem(
 ) {
     if (checked != null && rightIcon != null)
         throw IllegalArgumentException("checked and rightIcon should not be both set")
-    val clickableMod = if (onClick != null) Modifier.clip(RoundedCornerShape(16.dp)).clickable { onClick() } else Modifier
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         shape = RoundedCornerShape(16.dp),
         tonalElevation = 1.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .then(clickableMod)
                 .padding(horizontal = 18.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
